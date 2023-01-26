@@ -20,7 +20,6 @@ from transformers import TrainingArguments
 class EvaluateGLUE():
     """ Class to Evaluate Model on GLUE."""
 
-
     def __init__(
             self,
             model: transformers.PreTrainedModel,
@@ -44,7 +43,6 @@ class EvaluateGLUE():
 
         self.current_task: str = task
     
-
     def __tokenize(self, instance: str, task: str) -> typing.Any:
         """Tokenize Dataset for Model.
         
@@ -60,16 +58,14 @@ class EvaluateGLUE():
             return toret
         else:
             raise NotImplementedError()
-
     
     def __load(self) -> None:
         raw_datasets = load_dataset("glue", self.task)
-        self.tokenized_datasets = raw_datasets.map(tokenize_function, batched=True)
-        self.data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
-
+        self.tokenized_datasets = raw_datasets.map(self.__tokenize, batched=True)
+        self.data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer)
 
     def __train(self) -> None:
-        trainer = Trainer(
+        self.trainer = Trainer(
             self.model,
             self.train_args,
             train_dataset=self.tokenized_datasets["train"],
@@ -77,13 +73,13 @@ class EvaluateGLUE():
             data_collator=self.data_collator,
             tokenizer=self.tokenizer,
         )
-        trainer.train()
-
+        self.trainer.train()
 
     def evaluate(self) -> dict:
         self.__load()
         self.__train()
-        predictions = trainer.predict(self.tokenized_datasets["validation"])
+        predictions = self.trainer.predict(self.tokenized_datasets["validation"])
+        preds = np.argmax(predictions.predictions, axis=-1)
 
         metric = evaluate.load("glue", self.task)
         return metric.compute(predictions=preds, references=predictions.label_ids)

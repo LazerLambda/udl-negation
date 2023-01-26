@@ -18,7 +18,10 @@ tox
 flake8
 
 # REQUIREMENTS
-dataset
+checklist
+datasets
 evaluate
+nltk
 transformers
 wandb
+spacy
