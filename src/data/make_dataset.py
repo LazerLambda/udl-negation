@@ -3,6 +3,7 @@
 import checklist
 import logging
 import nltk
+import re
 import typing
 import templates
 import tqdm
@@ -48,9 +49,22 @@ def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Ed
     :returns: List of tuples consisting of (left) ground truth and (right) input.
     """
     return_list: list = []
+    return_list.append(('y', 'x'))
     for (wrd, ant) in wrd_ant_lst:
-        main, maksed0, masked1 = editor.template(template, word=[wrd, mask_token], antonym=[ant, mask_token]).data[0:3]
-        return_list.append((main, maksed0))
+        # TODO: Workaround. Fix later.
+        # Account for a/an rule
+        mask_token_ant: str = ant + mask_token
+        mask_token_wrd: str = wrd + mask_token
+
+        main = editor.template(template, word=[wrd], antonym=[ant]).data[0]
+
+        masked0 = editor.template(template, word=[wrd], antonym=[mask_token_ant]).data[0]
+        masked0: str = re.sub(mask_token_ant, mask_token, masked0)
+
+        masked1 = editor.template(template, word=[mask_token_wrd], antonym=[ant]).data[0]
+        masked1: str = re.sub(mask_token_wrd, mask_token, masked1)
+
+        return_list.append((main, masked0))
         return_list.append((main, masked1))
     return return_list
 
