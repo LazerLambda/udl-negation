@@ -9,11 +9,11 @@ MIT-License
 import os
 from typing import Any, Tuple
 
-import data.make_dataset as data_tools
+from .data.make_dataset import main
 import datasets
 import pandas as pd
 import torch
-from Experiment import Experiment
+from .Experiment import Experiment
 
 
 class NegDataOnlyExperiment(Experiment):
@@ -126,6 +126,6 @@ class NegDataOnlyExperiment(Experiment):
         val_prop: float = self.dataset_config['val-prop']
 
         if not os.path.exists(data_path):  # Check if dataset exists
-            data_tools.main()
+            main()
 
         self.dataset = self.load_custom_dataset(data_path, test=test_prop, val=val_prop)

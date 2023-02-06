@@ -5,16 +5,14 @@ Philipp Koch, 2023
 MIT-License
 """
 
+import typing
+
 import evaluate
 import numpy as np
 import transformers
-import typing
-
 from datasets import load_dataset
-from transformers import AutoModelForSequenceClassification
-from transformers import AutoTokenizer, DataCollatorWithPadding
-from transformers import Trainer
-from transformers import TrainingArguments
+from transformers import (AutoModelForSequenceClassification, AutoTokenizer,
+                          DataCollatorWithPadding, Trainer, TrainingArguments)
 
 
 class EvaluateGLUE():

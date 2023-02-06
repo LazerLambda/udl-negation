@@ -6,7 +6,8 @@ import re
 from sys import stdout
 
 import nltk
-import templates
+import pathlib
+from .templates import  TEMPLATES
 from checklist.editor import Editor
 from nltk.corpus import wordnet as wn
 
@@ -75,6 +76,8 @@ def write_to_file(path: str, data: list) -> None:
     :param path: Path where the output file is written to.
     :param data: Data that is written to the file.
     """
+    head, _ = os.path.split(path)
+    pathlib.Path(head).mkdir(parents=True, exist_ok=True) 
     f = open(path, "w")
     f.writelines(map(lambda e: str(e[0]) + "|" + str(e[1]) + "\n", data))
     f.close()
@@ -91,8 +94,8 @@ def main(data_path: str = '.') -> None:
     pos_wrd_ant_list: list = list(map(lambda e: (e, get_word_and_antonym(e)), pos))
     ret_list: list = list()
     for pos, wrd_ant_list in pos_wrd_ant_list:
-        total: int = len(templates.TEMPLATES[pos])
-        for i, temp in enumerate(templates.TEMPLATES[pos]):
+        total: int = len(TEMPLATES[pos])
+        for i, temp in enumerate(TEMPLATES[pos]):
             ret_list += fill_templates(wrd_ant_list, temp, '<mask>', editor)
             stdout.write(f"\r{pos}: {i+1}/{total}")
             stdout.flush()

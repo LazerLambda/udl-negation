@@ -35,6 +35,7 @@ class Experiment:
 
     def __init__(
             self,
+            name: str,
             model_checkpoint: str,
             dataset_config: dict,
             seed: int,
@@ -47,6 +48,7 @@ class Experiment:
             device: str = ""):
         """Instantiate Experiment Class.
 
+        :param name: Name of the experiment.
         :param model_checkpoint: Model checkpoint to be loaded (only Encoder models).
         :param dataset_config: Dictionary including all dataset related configs.
         :param seed: Seed for reproducability.
@@ -61,7 +63,7 @@ class Experiment:
         :param device: Device on which training will be executed.
         """
         torch.manual_seed(seed)
-        torch.use_deterministic_algorithms()
+        torch.use_deterministic_algorithms(True)
         np.random.seed(0)
 
         self.model_checkpoint: str = model_checkpoint
@@ -98,6 +100,7 @@ class Experiment:
         # log = logging.getLogger(__name__)
         # Set Up Logging
         wandb.init(config={
+            'experiment': name,
             'model checkpoint': self.model_checkpoint,
             'model': str(self.model.config),
             # 'model name': model.config._name_or_path,
