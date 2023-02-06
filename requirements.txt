@@ -21,7 +21,10 @@ flake8
 checklist
 datasets
 evaluate
+git+https://github.com/LazerLambda/life-after-bert/
+hydra-core
 nltk
 transformers
+torch
 wandb
 spacy
