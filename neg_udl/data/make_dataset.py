@@ -1,24 +1,23 @@
 """Script to Create Dataset."""
 
-import checklist
 import logging
-import nltk
+import os
 import re
-import typing
-import templates
-import tqdm
+from sys import stdout
 
+import nltk
+import templates
 from checklist.editor import Editor
 from nltk.corpus import wordnet as wn
-from sys import stdout
 
 # Download NLTK Prerequisites
 nltk.download('wordnet')
 nltk.download('omw-1.4')
 
+
 def get_word_and_antonym(pos: str) -> list[tuple[str, str]]:
     """Get List of Words and Antonyms.
-    
+
     Get a list of all available part-of-speech words from wordnet and
     their respective antonym.
 
@@ -35,17 +34,18 @@ def get_word_and_antonym(pos: str) -> list[tuple[str, str]]:
     logging.info("All words and their respective antonyms downloaded.")
     return return_list
 
+
 def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Editor) -> list[tuple[str, str]]:
     """Fill Templates with Word and Antonym.
-    
+
     Fills a list of words and antonyms into a provided template.
 
-    :param wrd_ant_list: List of tuples including words (left) and their respective
+    :param wrd_ant_lst: List of tuples including words (left) and their respective
         antonyms (right).
     :param template: Template that is to be filled with the words and antonyms. Must
         be a valid string for checklist's Editor class.
     :param mask_token: Special mask token of the used tokenizer of the main model.
-    :paramm editor: Checklist Editor for formating strings.
+    :param editor: Checklist Editor for formating strings.
     :returns: List of tuples consisting of (left) ground truth and (right) input.
     """
     return_list: list = []
@@ -59,18 +59,19 @@ def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Ed
         main = editor.template(template, word=[wrd], antonym=[ant]).data[0]
 
         masked0 = editor.template(template, word=[wrd], antonym=[mask_token_ant]).data[0]
-        masked0: str = re.sub(mask_token_ant, mask_token, masked0)
+        masked0_str: str = re.sub(mask_token_ant, mask_token, masked0)
 
         masked1 = editor.template(template, word=[mask_token_wrd], antonym=[ant]).data[0]
-        masked1: str = re.sub(mask_token_wrd, mask_token, masked1)
+        masked1_str: str = re.sub(mask_token_wrd, mask_token, masked1)
 
-        return_list.append((main, masked0))
-        return_list.append((main, masked1))
+        return_list.append((main, masked0_str))
+        return_list.append((main, masked1_str))
     return return_list
+
 
 def write_to_file(path: str, data: list) -> None:
     """Write Data to File.
-    
+
     :param path: Path where the output file is written to.
     :param data: Data that is written to the file.
     """
@@ -79,8 +80,12 @@ def write_to_file(path: str, data: list) -> None:
     f.close()
     logging.info(str(len(data)) + f" lines written to file at {path}!")
 
-def main():
-    """Run Script."""
+
+def main(data_path: str = '.') -> None:
+    """Run Script.
+
+    :param data_path: Path where dataset will be saved.
+    """
     editor: Editor = Editor()
     pos: list = ['NOUN']
     pos_wrd_ant_list: list = list(map(lambda e: (e, get_word_and_antonym(e)), pos))
@@ -91,7 +96,8 @@ def main():
             ret_list += fill_templates(wrd_ant_list, temp, '<mask>', editor)
             stdout.write(f"\r{pos}: {i+1}/{total}")
             stdout.flush()
-    write_to_file('text.txt', ret_list)
+    write_to_file(data_path, ret_list)
+
 
 if __name__ == "__main__":
     main()
