@@ -9,13 +9,13 @@ MIT-License
 import os
 import re
 import typing
-from typing import Any, Union
+from typing import Any
 
 import life_after_bert
 import numpy as np
 import torch
 import wandb
-from datasets import load_dataset
+from datasets import Dataset, load_dataset
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
@@ -31,7 +31,7 @@ class Experiment:
     loop. Dataset must be initialized in child class.
     """
 
-    dataset: typing.Any = None
+    dataset: Dataset = []
 
     def __init__(
             self,
@@ -42,9 +42,9 @@ class Experiment:
             batch_size: int,
             lr: float,
             model_target_path: str,
-            freeze_layers: Union[tuple, bool] = False,
+            freeze_layers: tuple = (),
             model_tmp_path: str = './TMP_CHECKPOINT.pt',
-            device: str = None):
+            device: str = ""):
         """Instantiate Experiment Class.
 
         :param model_checkpoint: Model checkpoint to be loaded (only Encoder models).
@@ -55,7 +55,7 @@ class Experiment:
         :param lr: Learning rate for optimizer.
         :param model_target_path: Path where trained model will be saved.
         :param freeze_layers: Tuple, (begin, end) of range of layers which will be
-            frozen. To use the whole model, use `False` (default).
+            frozen. To use the whole model, use `()` (default).
         :param model_tmp_path: Path where model checkpoints will be saved during
             training.
         :param device: Device on which training will be executed.
@@ -68,10 +68,10 @@ class Experiment:
         self.model: AutoModelForMaskedLM = AutoModelForMaskedLM.from_pretrained(
             model_checkpoint)
         if not device:
-            device: str = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+            device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
         self.device: str = device
         self.model.to(self.device)
-        if not isinstance(freeze_layers, tuple):
+        if not bool(freeze_layers):
             self._freeze_layers(freeze_layers[0], freeze_layers[1])
 
         self.tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained(
@@ -81,6 +81,7 @@ class Experiment:
         self.optimizer: AdamW = AdamW(self.model.parameters(), lr=lr)
 
         self.dataset_config: dict = dataset_config
+        self.num_epochs: int = num_epochs
         self.batch_size: int = batch_size
         self.model_target_path: str = model_target_path
         self.model_tmp_path: str = model_tmp_path
@@ -104,7 +105,7 @@ class Experiment:
             # 'model: classifier dropout': model.config.classifier_dropout,
             # 'model: hidden act fun': model.config.hidden_act,
             'loss': str(self.optimizer),
-            'epochs': num_epochs,
+            'epochs': self.num_epochs,
             'frozen layers': f"{freeze_layers[0]}-{freeze_layers[1]}"
         })
 
@@ -171,7 +172,7 @@ class Experiment:
 
     def run(self) -> None:
         """Run Experiment."""
-        if self.dataset is None:
+        if not bool(self.dataset):
             self.prepare_dataset()
 
         path_tmp: str = '/content/drive/MyDrive/UDL/TMP_CHECKPOINT.pt'
