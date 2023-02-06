@@ -1,0 +1,21 @@
+y|x
+It has been an off-season. This hasn't been a high season.|It has been an off-season. This hasn't been a <mask>.
+It has been an off-season. This hasn't been a high season.|It has been an <mask>. This hasn't been a high season.
+It has been a rainy season. This hasn't been a dry season.|It has been a rainy season. This hasn't been a <mask>.
+It has been a rainy season. This hasn't been a dry season.|It has been a <mask>. This hasn't been a dry season.
+It has been a dry season. This hasn't been a rainy season.|It has been a dry season. This hasn't been a <mask>.
+It has been a dry season. This hasn't been a rainy season.|It has been a <mask>. This hasn't been a rainy season.
+It has been a top. This hasn't been a bottom.|It has been a top. This hasn't been a <mask>.
+It has been a top. This hasn't been a bottom.|It has been a <mask>. This hasn't been a bottom.
+It has been a bottom. This hasn't been a top.|It has been a bottom. This hasn't been a <mask>.
+It has been a bottom. This hasn't been a top.|It has been a <mask>. This hasn't been a top.
+It has been a beginning. This hasn't been a middle.|It has been a beginning. This hasn't been a <mask>.
+It has been a beginning. This hasn't been a middle.|It has been a <mask>. This hasn't been a middle.
+It has been a middle. This hasn't been an end.|It has been a middle. This hasn't been an <mask>.
+It has been a middle. This hasn't been an end.|It has been a <mask>. This hasn't been an end.
+It has been an end. This hasn't been a beginning.|It has been an end. This hasn't been a <mask>.
+It has been an end. This hasn't been a beginning.|It has been an <mask>. This hasn't been a beginning.
+It has been an acceleration. This hasn't been a deceleration.|It has been an acceleration. This hasn't been a <mask>.
+It has been an acceleration. This hasn't been a deceleration.|It has been an <mask>. This hasn't been a deceleration.
+It has been a deceleration. This hasn't been an acceleration.|It has been a deceleration. This hasn't been an <mask>.
+It has been a deceleration. This hasn't been an acceleration.|It has been a <mask>. This hasn't been an acceleration.
