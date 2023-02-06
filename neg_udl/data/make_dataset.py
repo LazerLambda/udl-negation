@@ -7,7 +7,8 @@ from sys import stdout
 
 import nltk
 import pathlib
-from .templates import  TEMPLATES
+from templates import TEMPLATES
+# from .templates import  TEMPLATES
 from checklist.editor import Editor
 from nltk.corpus import wordnet as wn
 
@@ -50,7 +51,6 @@ def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Ed
     :returns: List of tuples consisting of (left) ground truth and (right) input.
     """
     return_list: list = []
-    return_list.append(('y', 'x'))
     for (wrd, ant) in wrd_ant_lst:
         # TODO: Workaround. Fix later.
         # Account for a/an rule
@@ -84,13 +84,13 @@ def write_to_file(path: str, data: list) -> None:
     logging.info(str(len(data)) + f" lines written to file at {path}!")
 
 
-def main(data_path: str = '.') -> None:
+def main(data_path: str = './data.txt') -> None:
     """Run Script.
 
     :param data_path: Path where dataset will be saved.
     """
     editor: Editor = Editor()
-    pos: list = ['NOUN']
+    pos: list = ['NOUN', 'ADJ']
     pos_wrd_ant_list: list = list(map(lambda e: (e, get_word_and_antonym(e)), pos))
     ret_list: list = list()
     for pos, wrd_ant_list in pos_wrd_ant_list:
@@ -99,6 +99,8 @@ def main(data_path: str = '.') -> None:
             ret_list += fill_templates(wrd_ant_list, temp, '<mask>', editor)
             stdout.write(f"\r{pos}: {i+1}/{total}")
             stdout.flush()
+        stdout.flush()
+    ret_list.insert(0, ('y', 'x'))
     write_to_file(data_path, ret_list)
 
 

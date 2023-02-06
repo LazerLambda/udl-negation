@@ -102,15 +102,18 @@ class Experiment:
         wandb.init(config={
             'experiment': name,
             'model checkpoint': self.model_checkpoint,
-            'model': str(self.model.config),
-            # 'model name': model.config._name_or_path,
-            # 'model: attention dropout prob': model.config.attention_probs_dropout_prob,
-            # 'model: classifier dropout': model.config.classifier_dropout,
-            # 'model: hidden act fun': model.config.hidden_act,
+            'model': self.model.config,
+            ##
+            'model name': self.model.config._name_or_path,
+            'model: attention dropout prob': self.model.config.attention_probs_dropout_prob,
+            'model: classifier dropout': self.model.config.classifier_dropout,
+            'model: hidden act fun': self.model.config.hidden_act,
+            ##
             'loss': str(self.optimizer),
             'epochs': self.num_epochs,
             'frozen layers': f"{freeze_layers[0]}-{freeze_layers[1]}"
         })
+        wandb.run.name = name
 
     def _freeze_layers(self, begin: int, end: int) -> None:
         """Freeze Layers of Model.
@@ -177,8 +180,6 @@ class Experiment:
         """Run Experiment."""
         if not bool(self.dataset):
             self.prepare_dataset()
-
-        path_tmp: str = '/content/drive/MyDrive/UDL/TMP_CHECKPOINT.pt'
 
         data_collator: DataCollator4TC = DataCollator4TC(self.tokenizer)
 
@@ -247,5 +248,5 @@ class Experiment:
             path_target)
         # log.info('Saved trained model at:' + path_target)
 
-        os.remove(path_tmp)
+        os.remove(self.model_tmp_path)
         # log.info('Training checkpoint deleted.')

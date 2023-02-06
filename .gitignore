@@ -94,3 +94,5 @@ target/
 # Custom
 *.txt
 outputs/
+wandb/
+models/
