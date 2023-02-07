@@ -2,12 +2,17 @@
 
 import logging
 import os
+import pathlib
 import re
 from sys import stdout
 
 import nltk
-import pathlib
-from .templates import  TEMPLATES
+
+try:
+    from .templates import TEMPLATES
+except Exception:
+    from templates import TEMPLATES
+
 from checklist.editor import Editor
 from nltk.corpus import wordnet as wn
 
@@ -84,7 +89,7 @@ def write_to_file(path: str, data: list) -> None:
     :param data: Data that is written to the file.
     """
     head, _ = os.path.split(path)
-    pathlib.Path(head).mkdir(parents=True, exist_ok=True) 
+    pathlib.Path(head).mkdir(parents=True, exist_ok=True)
     f = open(path, "w")
     f.writelines(map(lambda e: str(e[0]) + "|" + str(e[1]) + "\n", data))
     f.close()

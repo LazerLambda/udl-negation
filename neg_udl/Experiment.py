@@ -14,7 +14,6 @@ from typing import Any
 import life_after_bert
 import numpy as np
 import torch
-import wandb
 from datasets import Dataset, load_dataset
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
@@ -22,6 +21,8 @@ from tqdm.auto import tqdm
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 from transformers import DataCollatorForTokenClassification as DataCollator4TC
 from transformers import get_scheduler
+
+import wandb
 
 
 class Experiment:
@@ -64,7 +65,7 @@ class Experiment:
         """
         torch.manual_seed(seed)
         torch.use_deterministic_algorithms(True)
-        np.random.seed(0)
+        np.random.seed(seed)
 
         self.model_checkpoint: str = model_checkpoint
         self.model: AutoModelForMaskedLM = AutoModelForMaskedLM.from_pretrained(
@@ -226,8 +227,8 @@ class Experiment:
                 progress_bar.update(1)
             # TODO: Eval
             # - GLUE ?
-            eval_total_loss: float = self._eval_test(eval_dataloader)
-            eval_antonym_negation: float = self._eval_antonym_negation()
+            eval_total_loss = self._eval_test(eval_dataloader)
+            eval_antonym_negation = self._eval_antonym_negation()
 
             wandb.log(
                 {

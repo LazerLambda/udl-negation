@@ -1,6 +1,6 @@
 """Templates File."""
 
-NOUN_TEMPLATES: list= [
+NOUN_TEMPLATES: list = [
     "This is {a:word} and not {a:antonym}.",
     "This was {a:word} and not {a:antonym}.",
     "This will be {a:word} and not {a:antonym}.",
