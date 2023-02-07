@@ -24,6 +24,7 @@ evaluate
 git+https://github.com/LazerLambda/life-after-bert/
 hydra-core
 nltk
+python-dotenv
 transformers
 torch
 wandb

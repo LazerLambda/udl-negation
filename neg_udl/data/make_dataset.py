@@ -7,8 +7,7 @@ from sys import stdout
 
 import nltk
 import pathlib
-from templates import TEMPLATES
-# from .templates import  TEMPLATES
+from .templates import  TEMPLATES
 from checklist.editor import Editor
 from nltk.corpus import wordnet as wn
 
@@ -37,7 +36,7 @@ def get_word_and_antonym(pos: str) -> list[tuple[str, str]]:
     return return_list
 
 
-def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Editor) -> list[tuple[str, str]]:
+def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Editor, pos: str) -> list[tuple[str, str]]:
     """Fill Templates with Word and Antonym.
 
     Fills a list of words and antonyms into a provided template.
@@ -48,6 +47,7 @@ def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Ed
         be a valid string for checklist's Editor class.
     :param mask_token: Special mask token of the used tokenizer of the main model.
     :param editor: Checklist Editor for formating strings.
+    :param pos: Part-of-speech (e.g. 'ADJ', 'VERB', ...)
     :returns: List of tuples consisting of (left) ground truth and (right) input.
     """
     return_list: list = []
@@ -61,6 +61,13 @@ def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Ed
 
         masked0 = editor.template(template, word=[wrd], antonym=[mask_token_ant]).data[0]
         masked0_str: str = re.sub(mask_token_ant, mask_token, masked0)
+        if pos == "VERB":
+            if bool(re.match("I", masked0_str)):
+                masked0_str = re.sub(r" be ", " am ", masked0_str)
+            elif bool(re.match("You|They|We", masked0_str)):
+                masked0_str = re.sub(r" be ", " are ", masked0_str)
+            else:
+                masked0_str = re.sub(r" be ", " is ", masked0_str)
 
         masked1 = editor.template(template, word=[mask_token_wrd], antonym=[ant]).data[0]
         masked1_str: str = re.sub(mask_token_wrd, mask_token, masked1)
@@ -96,7 +103,7 @@ def main(data_path: str = './data.txt') -> None:
     for pos, wrd_ant_list in pos_wrd_ant_list:
         total: int = len(TEMPLATES[pos])
         for i, temp in enumerate(TEMPLATES[pos]):
-            ret_list += fill_templates(wrd_ant_list, temp, '<mask>', editor)
+            ret_list += fill_templates(wrd_ant_list, temp, '<mask>', editor, pos)
             stdout.write(f"\r{pos}: {i+1}/{total}")
             stdout.flush()
         stdout.flush()

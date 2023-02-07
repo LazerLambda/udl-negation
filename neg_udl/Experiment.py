@@ -204,6 +204,14 @@ class Experiment:
         )
         progress_bar = tqdm(range(num_training_steps))
 
+        eval_total_loss: float = self._eval_test(eval_dataloader)
+        eval_antonym_negation: float = self._eval_antonym_negation()
+        wandb.log(
+            {
+                'total-loss': eval_total_loss,
+                'antonym-negation': eval_antonym_negation
+            })
+
         self.model.train()
         for epoch in range(self.num_epochs):
             for batch in train_dataloader:
