@@ -15,13 +15,14 @@ except Exception:
 
 from checklist.editor import Editor
 from nltk.corpus import wordnet as wn
+from typing import List, Tuple
 
 # Download NLTK Prerequisites
 nltk.download('wordnet')
 nltk.download('omw-1.4')
 
 
-def get_word_and_antonym(pos: str) -> list[tuple[str, str]]:
+def get_word_and_antonym(pos: str) -> List[Tuple[str, str]]:
     """Get List of Words and Antonyms.
 
     Get a list of all available part-of-speech words from wordnet and
@@ -41,7 +42,7 @@ def get_word_and_antonym(pos: str) -> list[tuple[str, str]]:
     return return_list
 
 
-def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Editor, pos: str) -> list[tuple[str, str]]:
+def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Editor, pos: str) -> List[Tuple[str, str]]:
     """Fill Templates with Word and Antonym.
 
     Fills a list of words and antonyms into a provided template.
