@@ -18,11 +18,13 @@ tox
 flake8
 
 # REQUIREMENTS
+apache_beam
 checklist
 datasets
 evaluate
 git+https://github.com/LazerLambda/life-after-bert/
 hydra-core
+mwparserfromhell
 nltk
 transformers
 torch
