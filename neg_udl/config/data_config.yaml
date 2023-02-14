@@ -1,0 +1,4 @@
+preprocessing:
+  wiki:
+    wiki_proportion: 0.05
+    target: ../data/interim/wiki/
