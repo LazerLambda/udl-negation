@@ -14,14 +14,16 @@ from multiprocessing import Pool
 from typing import Callable, List, Tuple
 
 import datasets
+import hydra
 import pandas as pd
 import spacy
 from datasets import load_dataset
+from omegaconf import DictConfig
 
-TARGET_PATH: str = './data/interim/wiki/'
+TARGET_PATH: str = None
 
 
-def process_wiki(args: tuple, save_step: int = 1000) -> None:
+def process_wiki(args: tuple, save_step: int = 2000) -> None:
     """Pre-Process Wikipedia Dataset.
 
     Function splits data from wikipedia dataset into sentences and
@@ -29,13 +31,14 @@ def process_wiki(args: tuple, save_step: int = 1000) -> None:
     are changed to space.
 
     :param args: Arguments for function in form of
-        (process number, (lower index bound, upper index bound))
+        (process number, target path, (lower index bound, upper index bound))
     :param save_step: Step at which file is updated.
     """
-    p_no, ind_range = args
+    p_no, target_path, ind_range = args
+    total: int = ind_range[1] - ind_range[0]
     dataset_wikipedia = load_dataset("wikipedia", "20220301.en", beam_runner="DirectRunner")
     nlp = spacy.load('en_core_web_sm')
-    f = open(os.path.join(TARGET_PATH, f"wiki-{p_no}.txt"), "w")
+    f = open(os.path.join(target_path, f"wiki-{p_no}.txt"), "w")
     counter: int = 0
     sents: list = []
     neg: list = []
@@ -48,13 +51,13 @@ def process_wiki(args: tuple, save_step: int = 1000) -> None:
             sents.append(str(sent.text).replace('\n', ' ') + '\n')
             counter += 1
         if i % save_step == 0 and i != 0:
-            print(f"Write to file: {i - save_step} - {i}.")
+            print(f"Process {p_no}.\nWrite to file: {i - save_step} - {i}.\nTotal: {i - ind_range[0]}/{total}.")
             f.write(''.join(sents))
     f.write(''.join(sents))
     f.close()
     neg.append(f"n: {counter}")
     counter_dict: dict = {'neg': neg}
-    pd.DataFrame(counter_dict).to_csv(os.path.join(TARGET_PATH, f"wiki-{p_no}.csv"))
+    pd.DataFrame(counter_dict).to_csv(os.path.join(target_path, f"wiki-{p_no}.csv"))
 
 
 def get_ranges(n: int, p: int, lower: int = 0) -> List[Tuple[int, int]]:
@@ -74,17 +77,29 @@ def get_ranges(n: int, p: int, lower: int = 0) -> List[Tuple[int, int]]:
     return list(map(lambda e: (e[0] * e[1], upper_bound(e) if upper_bound(e) != n - diff else n), ranges))
 
 
-if __name__ == '__main__':
-    """Run Script."""
+@hydra.main(version_base=None, config_path="../config", config_name="data_config")
+def main(cfg: DictConfig) -> None:
+    """Run Main.
+
+    :param cfg: Hydra config.
+    """
     dataset_wikipedia: datasets.Dataset = load_dataset(
         "wikipedia",
         "20220301.en",
         beam_runner="DirectRunner")
     n: int = len(dataset_wikipedia['train'])
-    n = int(0.0001 * n)
+    n = int(cfg.preprocessing.wiki.wiki_proportion * n)
     print("Total length of new ds: ", str(n))
     p: int = multiprocessing.cpu_count()
-    pathlib.Path(TARGET_PATH).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(cfg.preprocessing.wiki.target).mkdir(parents=True, exist_ok=True)
     with Pool(p) as pool:
-        args: list = list(zip(range(1, n + 1), get_ranges(n, p)))
+        args: list = list(zip(
+            range(1, n + 1),
+            [cfg.preprocessing.wiki.target] * p,
+            get_ranges(n, p)))
         pool.map(process_wiki, args)
+
+
+if __name__ == '__main__':
+    """Run Script."""
+    main()
