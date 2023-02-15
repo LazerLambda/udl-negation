@@ -3,5 +3,5 @@ preprocessing:
     wiki_proportion: 0.05
     target: ../data/interim/wiki/
   owt:
-    proportion: 0.0001
+    proportion: 0.05
     target: ../data/interim/owt/
