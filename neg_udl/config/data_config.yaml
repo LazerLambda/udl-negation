@@ -8,3 +8,6 @@ preprocessing:
   cc_news:
     proportion: 0.05
     target: ../data/interim/cc_news/
+  bc:
+    proportion: 0.05
+    target: ../data/interim/bc/
