@@ -13,9 +13,10 @@ try:
 except Exception:
     from templates import TEMPLATES
 
+from typing import List, Tuple
+
 from checklist.editor import Editor
 from nltk.corpus import wordnet as wn
-from typing import List, Tuple
 
 # Download NLTK Prerequisites
 nltk.download('wordnet')

@@ -2,3 +2,6 @@ preprocessing:
   wiki:
     wiki_proportion: 0.05
     target: ../data/interim/wiki/
+  owt:
+    proportion: 0.0001
+    target: ../data/interim/owt/
