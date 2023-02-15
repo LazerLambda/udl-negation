@@ -4,3 +4,5 @@ wiki:
 	cd neg_udl/ && python data/make_wiki.py
 owt:
 	cd neg_udl/ && python data/make_owt.py
+cc_news:
+	cd neg_udl/ && python data/make_cc_news.py
