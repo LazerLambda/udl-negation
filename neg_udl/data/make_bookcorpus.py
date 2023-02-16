@@ -36,7 +36,7 @@ def process_bc(args: tuple, save_step: int = 2000) -> None:
     """
     p_no, target_path, ind_range = args
     total: int = ind_range[1] - ind_range[0]
-    dataset_bc = load_dataset("openwebtext")
+    dataset_bc = load_dataset("bookcorpus")
     nlp = spacy.load('en_core_web_sm')
     f = open(os.path.join(target_path, f"bc-{p_no}.txt"), "w")
     counter: int = 0
@@ -48,7 +48,7 @@ def process_bc(args: tuple, save_step: int = 2000) -> None:
         for token in obj:
             if token.dep_ == "neg":
                 neg.append(counter + 1)
-        sents.append(str(sent.text).replace('\n', ' ') + '\n')
+        sents.append(str(sent).replace('\n', ' ') + '\n')
         counter += 1
         if i % save_step == 0 and i != 0:
             print(f"Process {p_no}.\nWrite to file: {i - save_step} - {i}.\nTotal: {i - ind_range[0]}/{total}.")
@@ -83,7 +83,7 @@ def main(cfg: DictConfig) -> None:
 
     :param cfg: Hydra config.
     """
-    dataset_bc: datasets.Dataset = load_dataset("openwebtext")
+    dataset_bc: datasets.Dataset = load_dataset("bookcorpus")
     n: int = len(dataset_bc['train'])
     n = int(cfg.preprocessing.bc.proportion * n)
     print("Total length of new ds: ", str(n))

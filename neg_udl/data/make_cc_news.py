@@ -36,7 +36,7 @@ def process_cc_news(args: tuple, save_step: int = 2000) -> None:
     """
     p_no, target_path, ind_range = args
     total: int = ind_range[1] - ind_range[0]
-    dataset_cc_news = load_dataset("openwebtext")
+    dataset_cc_news = load_dataset("cc_news")
     nlp = spacy.load('en_core_web_sm')
     f = open(os.path.join(target_path, f"cc_news-{p_no}.txt"), "w")
     counter: int = 0
@@ -83,7 +83,7 @@ def main(cfg: DictConfig) -> None:
 
     :param cfg: Hydra config.
     """
-    dataset_cc_news: datasets.Dataset = load_dataset("openwebtext")
+    dataset_cc_news: datasets.Dataset = load_dataset("cc_news")
     n: int = len(dataset_cc_news['train'])
     n = int(cfg.preprocessing.cc_news.proportion * n)
     print("Total length of new ds: ", str(n))
