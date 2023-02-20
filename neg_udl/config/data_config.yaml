@@ -1,7 +1,7 @@
 preprocessing:
   wiki:
     wiki_proportion: 0.1
-    target: ../data/interim/wiki-test/
+    target: ../data/interim/wiki/
   owt:
     proportion: 0.1
     target: ../data/interim/owt/
@@ -10,4 +10,4 @@ preprocessing:
     target: ../data/interim/cc_news/
   bc:
     proportion: 0.1
-    target: ../data/interim/bc-test/
+    target: ../data/interim/bc/
