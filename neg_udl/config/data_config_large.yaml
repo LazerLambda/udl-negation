@@ -1,0 +1,13 @@
+preprocessing:
+  wiki:
+    wiki_proportion: 0.2
+    target: ../data/interim/wiki_large/
+  owt:
+    proportion: 0.05
+    target: ../data/interim/owt/
+  cc_news:
+    proportion: 0.05
+    target: ../data/interim/cc_news/
+  bc:
+    proportion: 0.05
+    target: ../data/interim/bc/

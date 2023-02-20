@@ -54,6 +54,7 @@ def process_wiki(args: tuple, save_step: int = 2000) -> None:
         if i % save_step == 0 and i != 0:
             print(f"Process {p_no}.\nWrite to file: {i - save_step} - {i}.\nTotal: {i - ind_range[0]}/{total}.")
             f.write(''.join(sents))
+            sents = []
     f.write(''.join(sents))
     f.close()
     neg.append(f"n: {counter}")
