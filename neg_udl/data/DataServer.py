@@ -64,15 +64,20 @@ class DataServer():
         self._check_collection()
         return data
 
-    def _check_collection(self) -> None:
+    def _check_collection(self, force: bool = False) -> None:
         """Check and Save Collection.
 
+        :param force: Force writing.
         If length of the interval is reached, the content of the internal
         collection is written to file.
         """
-        if len(self.collection) >= self.interval:
+        if len(self.collection) >= self.interval or force:
             f: IO = open(self.target_path, "a")
             f.writelines(line for line in self.collection)
             f.close()
             self.collection = []
             pass
+    
+    def done(self) -> None:
+        """Complete Operation by Writing Data."""
+        self._check_collection(force=True)

@@ -13,12 +13,13 @@ from typing import IO, List, Tuple
 
 import os
 import hydra
+import numpy as np
 import pandas as pd
 from DataServer import DataServer
 from omegaconf import DictConfig
 
 
-def make_data(path_target: str, path_data: str, path_csv: str, range_n: int) -> None:
+def make_data(path_target: str, path_data: str, path_csv: str, range_n: int, interval: int = 1000) -> None:
     """Make Dataset.
     
     Iterate over dataset line-by-line and save data if line
@@ -35,13 +36,14 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int) -> 
         number of total raw-data instances in last row.
     :param range_n: Length of rolling-window in one direction
         (n_range + 1 + n_range).
+    :param inverval: Interval, in which data will be saved.
     """
     df = pd.read_csv(path_csv)
     f: IO = open(path_data, 'r')
     n: int = range_n * 2 + 1
-    indices: list = list(df['neg'].values[:-1].astype(int))
+    indices: list = list(np.unique(df['neg'].values[:-1].astype(int)))
     next_neg: int = indices.pop(0)
-    collector: DataServer = DataServer(path_target, n=n, interval=2)
+    collector: DataServer = DataServer(path_target, n=n, interval=interval)
     for i, text in enumerate(f):
         collector.push(text)
         if i + 1 == int(next_neg) + range_n:
@@ -49,7 +51,6 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int) -> 
             if len(indices) != 0:
                 next_neg = indices.pop(0)
             else:
-                print("HIER", path_data)
                 break
 
     begin: int = i + 1
@@ -76,11 +77,9 @@ def combine_data(files: list, data_name: str) -> None:
     for file in files:
         f_tmp: IO = open(file, 'r')
 
-
 @hydra.main(version_base=None, config_path="../config", config_name="data_config")
 def main(cfg: DictConfig):
-    print(cfg['preprocessing'])
-    paths = get_paths(cfg.preprocessing.bc.target)
+    paths: List[Tuple[str, str, str]] = get_paths(cfg.preprocessing.bc.target)
     tmp_names: list = []
     for csv, txt, tail in paths:
         path_tmp: str = os.path.join(cfg.preprocessing.tmp.tmp_folder, tail + '_neg.txt')
@@ -90,7 +89,6 @@ def main(cfg: DictConfig):
             txt,
             csv,
             cfg.preprocessing.tmp.rolling_window)
-
 
 if __name__ == "__main__":
     main()
