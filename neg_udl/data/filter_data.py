@@ -6,12 +6,12 @@ Philipp Koch, 2023
 MIT-License
 """
 
+import os
 import re
 from os import listdir
 from os.path import isfile, join
 from typing import IO, List, Tuple
 
-import os
 import hydra
 import numpy as np
 import pandas as pd
@@ -21,7 +21,7 @@ from omegaconf import DictConfig
 
 def make_data(path_target: str, path_data: str, path_csv: str, range_n: int, interval: int = 1000) -> None:
     """Make Dataset.
-    
+
     Iterate over dataset line-by-line and save data if line
     is mentioned in data-csv. To use rolling-window technique,
     the indices of specific data instances are increased by the
@@ -36,7 +36,7 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int, int
         number of total raw-data instances in last row.
     :param range_n: Length of rolling-window in one direction
         (n_range + 1 + n_range).
-    :param inverval: Interval, in which data will be saved.
+    :param interval: Interval, in which data will be saved.
     """
     df = pd.read_csv(path_csv)
     f: IO = open(path_data, 'r')
@@ -64,7 +64,15 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int, int
                 break
     f.close()
 
+
 def get_paths(path: str) -> List[Tuple[str, str, str]]:
+    """Get Paths for Data Collection.
+
+    :param path: Path to folder in which output from 'make' scripts is outputted
+        to.
+    :returns: List of tuples containing paths to csv and txt files as well as the
+        names of the respective files without ending.
+    """
     files: list = [f for f in listdir(path) if isfile(join(path, f))]
     files_txt: list = list(filter(lambda e: bool(re.search(r"txt", e)), files))
     files_txt = list(map(lambda e: os.path.join(path, e), files_txt))
@@ -72,13 +80,26 @@ def get_paths(path: str) -> List[Tuple[str, str, str]]:
     files_csv: list = list(map(lambda e: os.path.join(path, e + '.csv'), file_names_cleaned))
     return list(zip(files_csv, files_txt, file_names_cleaned))
 
+
 def combine_data(files: list, data_name: str) -> None:
+    """Combine Data.
+
+    :param files: Files that will be combined.
+    :param data_name: Name of final data file.
+    """
     f: IO = open(data_name, 'w')
     for file in files:
         f_tmp: IO = open(file, 'r')
+        f_tmp.close()
+    f.close()
+
 
 @hydra.main(version_base=None, config_path="../config", config_name="data_config")
 def main(cfg: DictConfig):
+    """Run Main.
+
+    :param cfg: Hydra config.
+    """
     paths: List[Tuple[str, str, str]] = get_paths(cfg.preprocessing.bc.target)
     tmp_names: list = []
     for csv, txt, tail in paths:
@@ -89,6 +110,7 @@ def main(cfg: DictConfig):
             txt,
             csv,
             cfg.preprocessing.tmp.rolling_window)
+
 
 if __name__ == "__main__":
     main()

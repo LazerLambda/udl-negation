@@ -68,8 +68,8 @@ class DataServer():
         """Check and Save Collection.
 
         :param force: Force writing.
-        If length of the interval is reached, the content of the internal
-        collection is written to file.
+            If length of the interval is reached, the content of the internal
+            collection is written to file.
         """
         if len(self.collection) >= self.interval or force:
             f: IO = open(self.target_path, "a")
@@ -77,7 +77,7 @@ class DataServer():
             f.close()
             self.collection = []
             pass
-    
+
     def done(self) -> None:
         """Complete Operation by Writing Data."""
         self._check_collection(force=True)
