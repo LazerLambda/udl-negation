@@ -6,11 +6,15 @@ Philipp Koch, 2023
 MIT-License
 """
 
+import re
+from os import listdir
+from os.path import isfile, join
+from typing import IO, List, Tuple
+
+import os
 import hydra
 import pandas as pd
-from typing import IO
 from DataServer import DataServer
-
 from omegaconf import DictConfig
 
 
@@ -45,6 +49,7 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int) -> 
             if len(indices) != 0:
                 next_neg = indices.pop(0)
             else:
+                print("HIER", path_data)
                 break
 
     begin: int = i + 1
@@ -58,10 +63,33 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int) -> 
                 break
     f.close()
 
+def get_paths(path: str) -> List[Tuple[str, str, str]]:
+    files: list = [f for f in listdir(path) if isfile(join(path, f))]
+    files_txt: list = list(filter(lambda e: bool(re.search(r"txt", e)), files))
+    files_txt = list(map(lambda e: os.path.join(path, e), files_txt))
+    file_names_cleaned: list = list(map(lambda e: re.match(r".*\/(.*).txt$", e).group(1), files_txt))
+    files_csv: list = list(map(lambda e: os.path.join(path, e + '.csv'), file_names_cleaned))
+    return list(zip(files_csv, files_txt, file_names_cleaned))
+
+def combine_data(files: list, data_name: str) -> None:
+    f: IO = open(data_name, 'w')
+    for file in files:
+        f_tmp: IO = open(file, 'r')
+
+
 @hydra.main(version_base=None, config_path="../config", config_name="data_config")
 def main(cfg: DictConfig):
     print(cfg['preprocessing'])
-    # make_data(cfg.)
+    paths = get_paths(cfg.preprocessing.bc.target)
+    tmp_names: list = []
+    for csv, txt, tail in paths:
+        path_tmp: str = os.path.join(cfg.preprocessing.tmp.tmp_folder, tail + '_neg.txt')
+        tmp_names.append(path_tmp)
+        make_data(
+            path_tmp,
+            txt,
+            csv,
+            cfg.preprocessing.tmp.rolling_window)
 
 
 if __name__ == "__main__":

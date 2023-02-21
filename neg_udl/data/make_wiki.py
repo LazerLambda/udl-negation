@@ -48,6 +48,7 @@ def process_wiki(args: tuple, save_step: int = 2000) -> None:
             for token in sent:
                 if token.dep_ == "neg":
                     neg.append(counter + 1)
+                    break
             sents.append(str(sent.text).replace('\n', ' ') + '\n')
             counter += 1
         if i % save_step == 0 and i != 0:

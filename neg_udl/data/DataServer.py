@@ -6,6 +6,8 @@ Philipp Koch, 2023
 MIT-License
 """
 
+import os
+import pathlib
 from typing import IO, Any
 
 
@@ -30,6 +32,8 @@ class DataServer():
         self.list: list = []
         self.collection: list = []
         self.target_path: str = target_path
+        head, _ = os.path.split(target_path)
+        pathlib.Path(head).mkdir(parents=True, exist_ok=True)
         self.n: int = n
         self.interval: int = interval
 
