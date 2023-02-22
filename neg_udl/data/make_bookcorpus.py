@@ -12,6 +12,7 @@ import os
 import pathlib
 from multiprocessing import Pool
 from typing import Callable, List, Tuple
+from utils import process
 
 import datasets
 import hydra
@@ -94,6 +95,7 @@ def main(cfg: DictConfig) -> None:
     with Pool(p) as pool:
         args: list = list(zip(
             range(1, n + 1),
+            # ['bookcorpus'] * p,
             [cfg.preprocessing.bc.target] * p,
             get_ranges(n, p)))
         pool.map(process_bc, args)
