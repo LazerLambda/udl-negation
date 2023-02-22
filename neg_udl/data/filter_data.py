@@ -63,6 +63,7 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int, int
             else:
                 break
     f.close()
+    collector.done()
 
 
 def get_paths(path: str) -> List[Tuple[str, str, str]]:
@@ -100,16 +101,17 @@ def main(cfg: DictConfig):
 
     :param cfg: Hydra config.
     """
-    paths: List[Tuple[str, str, str]] = get_paths(cfg.preprocessing.bc.target)
     tmp_names: list = []
-    for csv, txt, tail in paths:
-        path_tmp: str = os.path.join(cfg.preprocessing.tmp.tmp_folder, tail + '_neg.txt')
-        tmp_names.append(path_tmp)
-        make_data(
-            path_tmp,
-            txt,
-            csv,
-            cfg.preprocessing.tmp.rolling_window)
+    for key in cfg.preprocessing.keys():
+        paths: List[Tuple[str, str, str]] = get_paths(cfg.preprocessing[key].target)
+        for csv, txt, tail in paths:
+            path_tmp: str = os.path.join(cfg.preprocessing.tmp.tmp_folder, tail + '_neg.txt')
+            tmp_names.append(path_tmp)
+            make_data(
+                path_tmp,
+                txt,
+                csv,
+                cfg.preprocessing.tmp.rolling_window)
 
 
 if __name__ == "__main__":
