@@ -14,3 +14,8 @@ preprocessing:
   tmp:
     tmp_folder: ../data/interim/tmp/
     rolling_window: 2
+    keys_list:
+      - wiki
+      - owt
+      - cc_news
+      - bc

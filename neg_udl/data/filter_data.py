@@ -38,7 +38,7 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int, int
         (n_range + 1 + n_range).
     :param interval: Interval, in which data will be saved.
     """
-    df = pd.read_csv(path_csv)
+    df = pd.read_csv(path_csv, dtype={"neg": str})
     f: IO = open(path_data, 'r')
     n: int = range_n * 2 + 1
     indices: list = list(np.unique(df['neg'].values[:-1].astype(int)))
@@ -50,8 +50,6 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int, int
             collector.rolling_window()
             if len(indices) != 0:
                 next_neg = indices.pop(0)
-            else:
-                break
 
     begin: int = i + 1
     for j in range(begin, i + n):
@@ -60,8 +58,6 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int, int
             collector.rolling_window()
             if len(indices) != 0:
                 next_neg = indices.pop(0)
-            else:
-                break
     f.close()
     collector.done()
 
@@ -102,7 +98,7 @@ def main(cfg: DictConfig):
     :param cfg: Hydra config.
     """
     tmp_names: list = []
-    for key in cfg.preprocessing.keys():
+    for key in cfg.preprocessing.tmp.keys_list:
         paths: List[Tuple[str, str, str]] = get_paths(cfg.preprocessing[key].target)
         for csv, txt, tail in paths:
             path_tmp: str = os.path.join(cfg.preprocessing.tmp.tmp_folder, tail + '_neg.txt')
