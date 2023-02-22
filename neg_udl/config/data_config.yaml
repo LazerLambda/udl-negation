@@ -9,5 +9,8 @@ preprocessing:
     proportion: 0.1
     target: ../data/interim/cc_news/
   bc:
-    proportion: 0.1
+    proportion: 0.00001
     target: ../data/interim/bc/
+  tmp:
+    tmp_folder: ../data/interim/tmp/
+    rolling_window: 2
