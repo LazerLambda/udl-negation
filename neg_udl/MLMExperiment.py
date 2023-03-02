@@ -63,6 +63,7 @@ class MLMExperiment(Experiment):
             'valid': train_test['test']})
         tokenize_function: Callable = lambda examples: self.tokenizer(examples["text"])
         tokenized_datasets: datasets.Dataset = dataset.map(tokenize_function, batched=True, num_proc=4, remove_columns=["text"])
+        logging.info("Dataset tokenized!")
 
         self.dataset = tokenized_datasets.map(
             self._group_texts,
