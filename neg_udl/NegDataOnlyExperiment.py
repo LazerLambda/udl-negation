@@ -67,7 +67,6 @@ class NegDataOnlyExperiment(Experiment):
         input_ids: list = []
         labels: list = []
         for elem_masked, elem_unmasked in zip(elem['x'], elem['y']):
-            # print(elem_masked, elem_unmasked)
             masked: torch.Tensor = self.tokenizer(elem_masked, return_tensors='pt')
             unmasked: torch.Tensor = self.tokenizer(elem_unmasked, return_tensors='pt')
             unm: torch.Tensor = unmasked['input_ids']

@@ -1,0 +1,20 @@
+experiment: MLMExperiment
+name: Neg Only Experiment
+seed: 42
+model:
+  name: roberta-base
+  freeze_lower: 0
+  freeze_upper: 11
+  target_path: ./models/
+  tmp_path: ./models/
+training:
+  epochs: 3
+  batch_size: 16
+  lr: 5e-5
+data:
+  path: './data/processed/roberta_filtered/debug.txt'
+  test-prop: 0.1
+  val-prop: 0.5
+  blocksize: 128
+
+debug: True

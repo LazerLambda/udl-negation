@@ -12,7 +12,6 @@ import os
 import pathlib
 from multiprocessing import Pool
 from typing import Callable, List, Tuple
-from utils import process
 
 import datasets
 import hydra
@@ -20,6 +19,7 @@ import pandas as pd
 import spacy
 from datasets import load_dataset
 from omegaconf import DictConfig
+from utils import process
 
 TARGET_PATH: str = None
 
