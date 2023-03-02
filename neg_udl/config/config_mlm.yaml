@@ -16,5 +16,3 @@ data:
   test-prop: 0.1
   val-prop: 0.5
   blocksize: 128
-
-debug: True
