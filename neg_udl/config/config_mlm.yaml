@@ -2,9 +2,9 @@ experiment: MLMExperiment
 name: Neg Only Experiment
 seed: 42
 model:
-  name: roberta-large
+  name: roberta-base
   freeze_lower: 0
-  freeze_upper: 18
+  freeze_upper: 9
   target_path: ./models/
   tmp_path: ./models/
 training:
