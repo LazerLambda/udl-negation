@@ -1,4 +1,4 @@
-experiment: MLMExperiment - LARGE
+experiment: MLMExperiment
 name: Neg Only Experiment - LARGE
 seed: 42
 data_collator: DataCollatorForLanguageModeling
