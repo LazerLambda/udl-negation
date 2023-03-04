@@ -11,6 +11,7 @@ from typing import Callable, Dict
 
 import datasets
 import torch
+import multiprocessing
 from datasets import load_dataset
 
 from .Experiment import Experiment
@@ -52,6 +53,7 @@ class MLMExperiment(Experiment):
         Requires 'path', 'test-prop' and 'blocksize' in dataset_config
         dict.
         """
+        torch.multiprocessing.set_start_method('spawn')
         path: str = self.dataset_config['path']
         test: float = self.dataset_config['test-prop']
         self.blocksize = self.dataset_config['blocksize']
@@ -62,14 +64,15 @@ class MLMExperiment(Experiment):
             'train': train_test['train'],
             'valid': train_test['test']})
         tokenize_function: Callable = lambda examples: self.tokenizer(examples["text"])
-        tokenized_datasets: datasets.Dataset = dataset.map(tokenize_function, batched=True, num_proc=4, remove_columns=["text"])
+        p: int = multiprocessing.cpu_count()
+        tokenized_datasets: datasets.Dataset = dataset.map(tokenize_function, batched=True, num_proc=p, remove_columns=["text"])
         logging.info("Dataset tokenized!")
 
         self.dataset = tokenized_datasets.map(
             self._group_texts,
             batched=True,
             batch_size=1000,
-            num_proc=4
+            num_proc=p
         )
         n_train: int = len(self.dataset['train'])
         n_test: int = len(self.dataset['valid'])

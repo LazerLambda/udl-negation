@@ -87,7 +87,8 @@ class Experiment:
 
         self.tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained(
             model_checkpoint,
-            use_fast=True)
+            use_fast=True,
+            max_len=512)
 
         self.optimizer: AdamW = AdamW(self.model.parameters(), lr=lr)
 
