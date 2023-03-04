@@ -11,6 +11,7 @@ from neg_udl.Experiment import Experiment
 from neg_udl.NegDataOnlyExperiment import NegDataOnlyExperiment
 from neg_udl.MLMExperiment import MLMExperiment
 from omegaconf import DictConfig
+import os
 import torch
 
 from dotenv import load_dotenv
@@ -52,5 +53,6 @@ def run_experiment(cfg: DictConfig) -> None:
         experiment.run()
 
 if __name__ == "__main__":
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
     torch.multiprocessing.set_start_method('spawn')
     run_experiment()
