@@ -81,7 +81,6 @@ class Experiment:
             frozen_layer = self._freeze_layers(
                 freeze_layers[0],
                 freeze_layers[1])
-        print(frozen_layer)
 
         self.tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained(
             model_checkpoint,
@@ -137,16 +136,6 @@ class Experiment:
         :param end: End of range for layer freezing.
         :returns: List of frozen layers.
         """
-        # regex: str = f"\\.[{begin}-{end}]\\."  # TODO:
-        # ret_list: list = []
-        # for name, param in self.model.named_parameters():
-        #     if bool(re.search(regex, name)):
-        #         logging.info(f"Freeze Layer: {name}")
-        #         param.requires_grad = False
-        #         ret_list.append(str(name) + ' - YES')
-        #     else:
-        #         ret_list.append(str(name) + ' - NO')
-        # return ret_list
         regex: str = r"layer\.([0-9]+)\."
         rng: list = list(range(begin, end))
         ret_list: list = []
@@ -154,14 +143,16 @@ class Experiment:
             if re.search(regex, name) is not None:
                 layer: int = int(re.search(regex, name).group(1))
                 if layer in rng:
-                    logging.info(f"Freeze Layer: {name}")
+                    logging.info(f"FREEZE Layer: {name}")
                     param.requires_grad = False
                     ret_list.append(str(name) + ' - YES')
                     continue
                 else:
                     ret_list.append(str(name) + ' - NO')
+                    logging.info(f"KEEP Layer: {name}")
                     continue
             ret_list.append(str(name) + ' - NO')
+            logging.info(f"KEEP Layer: {name}")
         return ret_list
 
     def prepare_dataset(self) -> None:
