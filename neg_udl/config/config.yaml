@@ -1,6 +1,7 @@
 experiment: NegDataOnlyExperiment
 name: Neg Only Experiment
 seed: 42
+data_collator: DataCollatorForTokenClassification
 model:
   name: roberta-base
   freeze_lower: 0

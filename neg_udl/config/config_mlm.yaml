@@ -1,6 +1,7 @@
 experiment: MLMExperiment - LARGE
 name: Neg Only Experiment - LARGE
 seed: 42
+data_collator: DataCollatorForLanguageModeling
 model:
   name: roberta-large
   freeze_lower: 0
