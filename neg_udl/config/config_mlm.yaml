@@ -1,6 +1,7 @@
 experiment: MLMExperiment
 name: Neg Only Experiment
 seed: 42
+data_collator: DataCollatorForLanguageModeling
 model:
   name: roberta-base
   freeze_lower: 0

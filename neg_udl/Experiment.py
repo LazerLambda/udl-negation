@@ -21,6 +21,7 @@ from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 from transformers import AutoModelForMaskedLM, AutoTokenizer
+from transformers import DataCollatorForLanguageModeling as DataCollator4LM
 from transformers import DataCollatorForTokenClassification as DataCollator4TC
 from transformers import get_scheduler
 
@@ -41,6 +42,7 @@ class Experiment:
             name: str,
             model_checkpoint: str,
             dataset_config: dict,
+            data_collator: str,
             seed: int,
             num_epochs: int,
             batch_size: int,
@@ -54,6 +56,7 @@ class Experiment:
         :param name: Name of the experiment.
         :param model_checkpoint: Model checkpoint to be loaded (only Encoder models).
         :param dataset_config: Dictionary including all dataset related configs.
+        :param data_collator: String of data collator that will be used in this experiment.
         :param seed: Seed for reproducability.
         :param num_epochs: Number of epochs for training.
         :param batch_size: Batch size for training.
@@ -101,6 +104,17 @@ class Experiment:
             model_tmp_path,
             'TMP-N-' + self.model.config._name_or_path + '.pt')
         pathlib.Path(model_tmp_path).mkdir(parents=True, exist_ok=True)
+
+        # Set Data Collator
+        self.data_collator: Any = -1
+        if data_collator == 'DataCollatorForTokenClassification':
+            self.data_collator = DataCollator4TC(self.tokenizer)
+            logging.info(f"Initialized: {data_collator}")
+        if data_collator == 'DataCollatorForLanguageModeling':
+            self.data_collator = DataCollator4LM(self.tokenizer)
+            logging.info(f"Initialized: {data_collator}")
+        if self.data_collator == -1:
+            raise Exception("Data Collator must be defined correctly!")
 
         # Set up antonym negation ds
         hub_dataset: typing.Any = load_dataset("KevinZ/oLMpics", "Antonym_Negation")["test"]
@@ -213,17 +227,15 @@ class Experiment:
         if not bool(self.dataset):
             self.prepare_dataset()
 
-        data_collator: DataCollator4TC = DataCollator4TC(self.tokenizer)
-
         train_dataloader = DataLoader(
             self.dataset["train"],
             shuffle=True, batch_size=self.batch_size,
-            collate_fn=data_collator
+            collate_fn=self.data_collator
         )
         eval_dataloader = DataLoader(
             self.dataset["valid"],
             batch_size=self.batch_size,
-            collate_fn=data_collator
+            collate_fn=self.data_collator
         )
 
         # TODO: Rm self?
