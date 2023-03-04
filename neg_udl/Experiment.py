@@ -203,10 +203,10 @@ class Experiment:
 
             n_batch: int = len(batch['input_ids'])
             n += n_batch
-            total_loss += n_batch * outputs.loss.cpu().item()
+            total_loss += n_batch * outputs.loss.item()
 
             self.model.train()
-        return (total_loss / n if n != 0 else None)
+        return ((total_loss / n).cpu() if n != 0 else None)
 
     def _eval_antonym_negation(self) -> float:
         """Eval on oLMpics' Antonym Nnegation.
@@ -229,16 +229,20 @@ class Experiment:
             self.prepare_dataset()
         self.model.to(self.device)
 
+        logging.info("Load Train-Dataset.")
         train_dataloader = DataLoader(
             self.dataset["train"],
             shuffle=True, batch_size=self.batch_size,
             collate_fn=self.data_collator
         )
+        logging.info("Train-Dataset loaded.")
+        logging.info("Load Test-Dataset.")
         eval_dataloader = DataLoader(
             self.dataset["valid"],
             batch_size=self.batch_size,
             collate_fn=self.data_collator
         )
+        logging.info("Test-Dataset loaded.")
 
         # TODO: Rm self?
         num_training_steps = self.num_epochs * len(train_dataloader)
@@ -249,9 +253,12 @@ class Experiment:
             num_training_steps=num_training_steps
         )
         progress_bar = tqdm(range(num_training_steps))
-
+        logging.info(f"Evaluate on test set.")
         eval_total_loss: Optional[float] = self._eval_test(eval_dataloader)
+        logging.info(f"Evaluation total loss: {eval_total_loss}")
+        logging.info(f"Evaluate on oLMpics.")
         eval_antonym_negation: float = self._eval_antonym_negation()
+        logging.info(f"oLMpics antomym negation: {eval_antonym_negation}")
         wandb.log(
             {
                 'total-loss': eval_total_loss,
@@ -262,13 +269,17 @@ class Experiment:
         for epoch in range(self.num_epochs):
             for batch in train_dataloader:
                 batch = {k: v.to(self.device) for k, v in batch.items()}
+                logging.info("Compute outputs.")
                 outputs = self.model(**batch)
+                logging.info("Compute Loss")
                 loss = outputs.loss
+                logging.info("Backpropagate.")
                 loss.backward()
 
                 self.optimizer.step()
                 self.lr_scheduler.step()
                 self.optimizer.zero_grad()
+                logging.info("Next.")
                 progress_bar.update(1)
             # TODO: Eval
             # - GLUE ?
