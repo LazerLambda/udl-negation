@@ -69,7 +69,7 @@ class MLMExperiment(Experiment):
             self._group_texts,
             batched=True,
             batch_size=1000,
-            num_proc=4,
+            num_proc=4
         )
         n_train: int = len(self.dataset['train'])
         n_test: int = len(self.dataset['valid'])
