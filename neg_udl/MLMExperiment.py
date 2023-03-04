@@ -7,11 +7,11 @@ MIT-License
 """
 
 import logging
+import multiprocessing
 from typing import Callable, Dict
 
 import datasets
 import torch
-import multiprocessing
 from datasets import load_dataset
 
 from .Experiment import Experiment
@@ -53,7 +53,6 @@ class MLMExperiment(Experiment):
         Requires 'path', 'test-prop' and 'blocksize' in dataset_config
         dict.
         """
-        torch.multiprocessing.set_start_method('spawn')
         path: str = self.dataset_config['path']
         test: float = self.dataset_config['test-prop']
         self.blocksize = self.dataset_config['blocksize']
