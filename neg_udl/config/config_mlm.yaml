@@ -13,6 +13,5 @@ training:
   lr: 5e-5
 data:
   path: './data/processed/roberta_filtered/debug.txt'
-  test-prop: 0.1
-  val-prop: 0.5
+  test-prop: 0.05
   blocksize: 128
