@@ -78,7 +78,6 @@ class Experiment:
         if not device:
             device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
         self.device: str = device
-        self.model.to(self.device)
         frozen_layer: Union[list, str] = "No frozen layers"
         if bool(freeze_layers):
             frozen_layer = self._freeze_layers(
@@ -227,6 +226,7 @@ class Experiment:
         """Run Experiment."""
         if not bool(self.dataset):
             self.prepare_dataset()
+        self.model.to(self.device)
 
         train_dataloader = DataLoader(
             self.dataset["train"],
