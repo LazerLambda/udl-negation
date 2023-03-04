@@ -138,6 +138,7 @@ class Experiment:
             ##
             'optimizer': self.optimizer.state_dict(),
             'epochs': self.num_epochs,
+            'batch_size': self.bath_size,
             'frozen layers': f"{freeze_layers[0]}-{freeze_layers[1]}",
             'frozen layers list': frozen_layer
         })
