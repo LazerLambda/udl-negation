@@ -206,7 +206,7 @@ class Experiment:
             total_loss += n_batch * outputs.loss.item()
 
             self.model.train()
-        return ((total_loss / n).cpu() if n != 0 else None)
+        return ((total_loss / n) if n != 0 else None)
 
     def _eval_antonym_negation(self) -> float:
         """Eval on oLMpics' Antonym Nnegation.
