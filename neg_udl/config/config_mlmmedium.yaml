@@ -1,20 +1,20 @@
 experiment: MLMExperiment
-name: Neg Only Experiment - LARGE
+name: Neg Only Experiment
 seed: 42
 data_collator: DataCollatorForLanguageModeling
 model:
-  name: roberta-large
+  name: roberta-medium
   freeze_lower: 0
-  freeze_upper: 16
+  freeze_upper: 6
   target_path: ./models/
   tmp_path: ./models/
 training:
-  epochs: 5
+  epochs: 3
   batch_size: 16
   lr: 5e-5
   eval_steps_n: 10000
   eval_steps: True
 data:
-  path: './data/processed/data.txt'
+  path: ./data/processed/roberta_filtered/debug.txt # './data/processed/data.txt'
   test-prop: 0.05
   blocksize: 128

@@ -29,6 +29,8 @@ def run_experiment(cfg: DictConfig) -> None:
             num_epochs=cfg.training.epochs,
             batch_size=cfg.training.batch_size,
             lr=cfg.training.lr,
+            steps=cfg.training.eval_steps_n,
+            eval_steps=cfg.training.eval_steps,
             model_target_path=cfg.model.target_path,
             freeze_layers=(cfg.model.freeze_lower, cfg.model.freeze_upper),
             model_tmp_path=cfg.model.tmp_path
@@ -45,6 +47,8 @@ def run_experiment(cfg: DictConfig) -> None:
             num_epochs=cfg.training.epochs,
             batch_size=cfg.training.batch_size,
             lr=cfg.training.lr,
+            steps=cfg.training.eval_steps_n,
+            eval_steps=cfg.training.eval_steps,
             model_target_path=cfg.model.target_path,
             freeze_layers=(cfg.model.freeze_lower, cfg.model.freeze_upper),
             model_tmp_path=cfg.model.tmp_path
