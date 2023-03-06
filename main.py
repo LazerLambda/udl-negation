@@ -17,7 +17,7 @@ import torch
 from dotenv import load_dotenv
 load_dotenv()
 
-@hydra.main(version_base=None, config_path="neg_udl/config", config_name="config_mlmbase")
+@hydra.main(version_base=None, config_path="neg_udl/config", config_name="config_mlm_bert_small")
 def run_experiment(cfg: DictConfig) -> None:
     if cfg.experiment == "NegDataOnlyExperiment":
         experiment: NegDataOnlyExperiment = NegDataOnlyExperiment(

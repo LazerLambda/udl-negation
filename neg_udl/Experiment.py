@@ -104,12 +104,12 @@ class Experiment:
 
         self.path_target: str = os.path.join(
             model_target_path,
-            'N-' + self.model.config._name_or_path + '.pt')
+            'N-' + str(self.model.config._name_or_path).replace('/', '-') + '.pt')
         pathlib.Path(model_target_path).mkdir(parents=True, exist_ok=True)
 
         self.model_tmp_path: str = os.path.join(
             model_tmp_path,
-            'TMP-N-' + self.model.config._name_or_path + '.pt')
+            'TMP-N-' + str(self.model.config._name_or_path).replace('/', '-') + '.pt')
         pathlib.Path(model_tmp_path).mkdir(parents=True, exist_ok=True)
 
         # Set Data Collator
