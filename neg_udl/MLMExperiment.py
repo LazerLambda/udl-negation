@@ -63,7 +63,7 @@ class MLMExperiment(Experiment):
             'train': train_test['train'],
             'valid': train_test['test']})
         tokenize_function: Callable = lambda examples: self.tokenizer(examples["text"])
-        p: int = multiprocessing.cpu_count()
+        p: int = 1 # multiprocessing.cpu_count()
         tokenized_datasets: datasets.Dataset = dataset.map(tokenize_function, batched=True, num_proc=p, remove_columns=["text"])
         logging.info("Dataset tokenized!")
 
