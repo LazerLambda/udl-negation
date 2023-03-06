@@ -3,9 +3,9 @@ name: Neg Only Experiment
 seed: 42
 data_collator: DataCollatorForLanguageModeling
 model:
-  name: roberta-base
+  name: roberta-medium
   freeze_lower: 0
-  freeze_upper: 9
+  freeze_upper: 6
   target_path: ./models/
   tmp_path: ./models/
 training:

@@ -48,6 +48,8 @@ class Experiment:
             batch_size: int,
             lr: float,
             model_target_path: str,
+            eval_steps: bool = False,
+            steps: int = 10000,
             freeze_layers: tuple = (),
             model_tmp_path: str = './TMP_CHECKPOINT.pt',
             device: str = ""):
@@ -61,6 +63,8 @@ class Experiment:
         :param num_epochs: Number of epochs for training.
         :param batch_size: Batch size for training.
         :param lr: Learning rate for optimizer.
+        :param eval_steps: Set to True if the model should be evaluated after each `steps`.
+        :param steps: Amount of steps after which the model is to be evaluated.
         :param model_target_path: Path where trained model will be saved.
         :param freeze_layers: Tuple, (begin, end) of range of layers which will be
             frozen. To use the whole model, use `()` (default).
@@ -94,6 +98,9 @@ class Experiment:
         self.dataset_config: dict = dataset_config
         self.num_epochs: int = num_epochs
         self.batch_size: int = batch_size
+
+        self.steps: int = steps
+        self.eval_steps: bool = eval_steps
 
         self.path_target: str = os.path.join(
             model_target_path,
@@ -262,6 +269,7 @@ class Experiment:
             })
 
         self.model.train()
+        counter: int = 0
         for epoch in range(self.num_epochs):
             for batch in train_dataloader:
                 batch = {k: v.to(self.device) for k, v in batch.items()}
@@ -273,16 +281,28 @@ class Experiment:
                 self.lr_scheduler.step()
                 self.optimizer.zero_grad()
                 progress_bar.update(1)
+
+                if self.eval_steps:
+                    if counter % self.steps:
+                        eval_total_loss = self._eval_test(eval_dataloader)
+                        eval_antonym_negation = self._eval_antonym_negation()
+                        wandb.log(
+                            {
+                                'total-loss': eval_total_loss,
+                                'antonym-negation': eval_antonym_negation
+                            })
+                counter += 1
             # TODO: Eval
             # - GLUE ?
-            eval_total_loss = self._eval_test(eval_dataloader)
-            eval_antonym_negation = self._eval_antonym_negation()
+            if not self.eval_steps:
+                eval_total_loss = self._eval_test(eval_dataloader)
+                eval_antonym_negation = self._eval_antonym_negation()
 
-            wandb.log(
-                {
-                    'total-loss': eval_total_loss,
-                    'antonym-negation': eval_antonym_negation
-                })
+                wandb.log(
+                    {
+                        'total-loss': eval_total_loss,
+                        'antonym-negation': eval_antonym_negation
+                    })
 
             # log.info(total_loss)
             torch.save(
