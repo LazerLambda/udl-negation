@@ -269,7 +269,7 @@ class Experiment:
             })
 
         self.model.train()
-        counter: int = 0
+        counter: int = 1
         for epoch in range(self.num_epochs):
             for batch in train_dataloader:
                 batch = {k: v.to(self.device) for k, v in batch.items()}
@@ -283,7 +283,7 @@ class Experiment:
                 progress_bar.update(1)
 
                 if self.eval_steps:
-                    if counter % self.steps:
+                    if counter % self.steps == 0:
                         eval_total_loss = self._eval_test(eval_dataloader)
                         eval_antonym_negation = self._eval_antonym_negation()
                         wandb.log(
