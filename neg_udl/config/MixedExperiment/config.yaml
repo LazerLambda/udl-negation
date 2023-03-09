@@ -1,0 +1,24 @@
+experiment: MixedExperiment
+name: Mixed Experiment
+seed: 42
+data_collator: DataCollatorForTokenClassification
+model:
+  name: prajjwal1/bert-small
+  freeze_lower: 0
+  freeze_upper: 3
+  target_path: ./models/
+  tmp_path: ./models/
+training:
+  epochs: 3
+  batch_size: 16
+  lr: 5e-5
+  eval_steps_n: 10000
+  eval_steps: True
+data:
+  path: ./data/processed/mixed_experiment/debug.txt
+  path_orig: ./data/processed/roberta_filtered/negation_aware_data.txt
+  path_synth: ./data/processed/wn_neg_processed/data_wn_masked.txt
+  test-prop: 0.1
+  val-prop: 0.5
+
+debug: True

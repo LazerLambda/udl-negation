@@ -43,7 +43,7 @@ def get_word_and_antonym(pos: str) -> List[Tuple[str, str]]:
     return return_list
 
 
-def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Editor, pos: str) -> List[Tuple[str, str]]:
+def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Editor, pos: str, amount: int = 1) -> List[Tuple[str, str]]:
     """Fill Templates with Word and Antonym.
 
     Fills a list of words and antonyms into a provided template.
@@ -55,6 +55,7 @@ def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Ed
     :param mask_token: Special mask token of the used tokenizer of the main model.
     :param editor: Checklist Editor for formating strings.
     :param pos: Part-of-speech (e.g. 'ADJ', 'VERB', ...)
+    :param amount: Amount of repeated samples.
     :returns: List of tuples consisting of (left) ground truth and (right) input.
     """
     return_list: list = []
@@ -67,20 +68,24 @@ def fill_templates(wrd_ant_lst: list, template: str, mask_token: str, editor: Ed
         main = editor.template(template, word=[wrd], antonym=[ant]).data[0]
 
         masked0 = editor.template(template, word=[wrd], antonym=[mask_token_ant]).data[0]
-        masked0_str: str = re.sub(mask_token_ant, mask_token, masked0)
-        if pos == "VERB":
-            if bool(re.match("I", masked0_str)):
-                masked0_str = re.sub(r" be ", " am ", masked0_str)
-            elif bool(re.match("You|They|We", masked0_str)):
-                masked0_str = re.sub(r" be ", " are ", masked0_str)
-            else:
-                masked0_str = re.sub(r" be ", " is ", masked0_str)
+        msk_tk_rgx: str = mask_token_ant.replace('[', '\[')
+        msk_tk_rgx = msk_tk_rgx.replace(']', '\]')
+        masked0_str: str = re.sub(msk_tk_rgx, mask_token, masked0)
+        # if pos == "VERB":
+        #     if bool(re.match("I", masked0_str)):
+        #         masked0_str = re.sub(r" be ", " am ", masked0_str)
+        #     elif bool(re.match("You|They|We", masked0_str)):
+        #         masked0_str = re.sub(r" be ", " are ", masked0_str)
+        #     else:
+        #         masked0_str = re.sub(r" be ", " is ", masked0_str)
 
         masked1 = editor.template(template, word=[mask_token_wrd], antonym=[ant]).data[0]
-        masked1_str: str = re.sub(mask_token_wrd, mask_token, masked1)
-
-        return_list.append((main, masked0_str))
-        return_list.append((main, masked1_str))
+        msk_tk_rgx: str = mask_token_wrd.replace('[', '\[')
+        msk_tk_rgx = msk_tk_rgx.replace(']', '\]')
+        masked1_str: str = re.sub(msk_tk_rgx, mask_token, masked1)
+        for _ in range(amount):
+            return_list.append((masked0_str, ant))
+            return_list.append((masked1_str, wrd))
     return return_list
 
 
@@ -93,30 +98,37 @@ def write_to_file(path: str, data: list) -> None:
     head, _ = os.path.split(path)
     pathlib.Path(head).mkdir(parents=True, exist_ok=True)
     f = open(path, "w")
-    f.writelines(map(lambda e: str(e[0]) + "|" + str(e[1]) + "\n", data))
+    f.writelines(map(lambda e: str(e[0]) + " [REF-BEG] " + str(e[1]) + " [REF-END]\n", data))
     f.close()
     logging.info(str(len(data)) + f" lines written to file at {path}!")
 
 
-def main(data_path: str = './data.txt') -> None:
+def main(data_path: str = '../data/processed/wn_neg_processed/data_wn_masked.txt', amount: int = 1) -> int:
     """Run Script.
 
     :param data_path: Path where dataset will be saved.
+    :param amount: Amount of repeated samples.
+    :returns: Length of dataset.
     """
     editor: Editor = Editor()
     pos: list = ['NOUN', 'ADJ']
     pos_wrd_ant_list: list = list(map(lambda e: (e, get_word_and_antonym(e)), pos))
     ret_list: list = list()
+    counter: int = 0
     for pos, wrd_ant_list in pos_wrd_ant_list:
         total: int = len(TEMPLATES[pos])
+        # counter += len(wrd_ant_list)
         for i, temp in enumerate(TEMPLATES[pos]):
-            ret_list += fill_templates(wrd_ant_list, temp, '<mask>', editor, pos)
+            tmp: list = fill_templates(wrd_ant_list, temp, '[MASK]', editor, pos, amount)
+            ret_list += tmp
+            counter += len(tmp)
             stdout.write(f"\r{pos}: {i+1}/{total}")
             stdout.flush()
         stdout.flush()
-    ret_list.insert(0, ('y', 'x'))
+    # ret_list.insert(0, ('y', 'x'))
     write_to_file(data_path, ret_list)
+    return counter
 
 
 if __name__ == "__main__":
-    main()
+    print("Amount: ", str(main()))
