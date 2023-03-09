@@ -115,7 +115,7 @@ class Experiment:
         # Set Data Collator
         self.data_collator: Any = -1
         if data_collator == 'DataCollatorForTokenClassification':
-            self.data_collator = DataCollator4TC(self.tokenizer)
+            self.data_collator = DataCollator4TC(self.tokenizer, padding='max_length', max_length=512)
             logging.info(f"Initialized: {data_collator}")
         if data_collator == 'DataCollatorForLanguageModeling':
             self.data_collator = DataCollator4LM(self.tokenizer)
@@ -133,23 +133,23 @@ class Experiment:
             tokenizer=self.tokenizer)
 
         # Set Up Logging
-        wandb.init(config={
-            'experiment': name,
-            'model checkpoint': self.model_checkpoint,
-            'model': self.model.config.to_dict(),
-            ##
-            'model name': self.model.config._name_or_path,
-            'model: attention dropout prob': self.model.config.attention_probs_dropout_prob,
-            'model: classifier dropout': self.model.config.classifier_dropout,
-            'model: hidden act fun': self.model.config.hidden_act,
-            ##
-            'optimizer': self.optimizer.state_dict(),
-            'epochs': self.num_epochs,
-            'batch_size': self.batch_size,
-            'frozen layers': f"{freeze_layers[0]}-{freeze_layers[1]}",
-            'frozen layers list': frozen_layer
-        })
-        wandb.run.name = name
+        # wandb.init(config={
+        #     'experiment': name,
+        #     'model checkpoint': self.model_checkpoint,
+        #     'model': self.model.config.to_dict(),
+        #     ##
+        #     'model name': self.model.config._name_or_path,
+        #     'model: attention dropout prob': self.model.config.attention_probs_dropout_prob,
+        #     'model: classifier dropout': self.model.config.classifier_dropout,
+        #     'model: hidden act fun': self.model.config.hidden_act,
+        #     ##
+        #     'optimizer': self.optimizer.state_dict(),
+        #     'epochs': self.num_epochs,
+        #     'batch_size': self.batch_size,
+        #     'frozen layers': f"{freeze_layers[0]}-{freeze_layers[1]}",
+        #     'frozen layers list': frozen_layer
+        # })
+        # wandb.run.name = name
 
     def _freeze_layers(self, begin: int, end: int) -> list:
         """Freeze Layers of Model.
@@ -262,11 +262,11 @@ class Experiment:
         progress_bar = tqdm(range(num_training_steps))
         eval_total_loss: Optional[float] = self._eval_test(eval_dataloader)
         eval_antonym_negation: float = self._eval_antonym_negation()
-        wandb.log(
-            {
-                'total-loss': eval_total_loss,
-                'antonym-negation': eval_antonym_negation
-            })
+        # wandb.log(
+        #     {
+        #         'total-loss': eval_total_loss,
+        #         'antonym-negation': eval_antonym_negation
+        #     })
 
         self.model.train()
         counter: int = 1
@@ -286,11 +286,11 @@ class Experiment:
                     if counter % self.steps == 0:
                         eval_total_loss = self._eval_test(eval_dataloader)
                         eval_antonym_negation = self._eval_antonym_negation()
-                        wandb.log(
-                            {
-                                'total-loss': eval_total_loss,
-                                'antonym-negation': eval_antonym_negation
-                            })
+                        # wandb.log(
+                        #     {
+                        #         'total-loss': eval_total_loss,
+                        #         'antonym-negation': eval_antonym_negation
+                        #     })
                 counter += 1
             # TODO: Eval
             # - GLUE ?
@@ -298,11 +298,11 @@ class Experiment:
                 eval_total_loss = self._eval_test(eval_dataloader)
                 eval_antonym_negation = self._eval_antonym_negation()
 
-                wandb.log(
-                    {
-                        'total-loss': eval_total_loss,
-                        'antonym-negation': eval_antonym_negation
-                    })
+                # wandb.log(
+                #     {
+                #         'total-loss': eval_total_loss,
+                #         'antonym-negation': eval_antonym_negation
+                #     })
 
             # log.info(total_loss)
             torch.save(

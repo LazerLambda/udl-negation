@@ -30,9 +30,9 @@ class MixedExperiment(Experiment):
     """
 
     # TODO Remove indices
-    def process_dataset(self, inputs: dict, end_index: int = 30523, begin_index: int = 30522, mlm_probabilty: float =0.15):
+    def process_dataset(self, inputs: dict, mlm_probabilty: float =0.15):
         """"""
-        tokenized: dict = self.tokenizer(inputs['text'], return_tensors='pt')
+        tokenized: dict = self.tokenizer(inputs['text'], return_tensors='pt', max_length=self.max_length, truncation=True)
 
         if 'input_ids' not in tokenized.keys():
             print(tokenized)
@@ -62,9 +62,14 @@ class MixedExperiment(Experiment):
             elem: tuple = (orig[0:ind], torch.tensor([self.tokenizer.mask_token_id] * len(label)), orig[(ind + 1):: ])
 
             # Concatenate splitted sequences and prepare for return
-            elem: torch.Tensor = torch.concat(elem).unsqueeze(0)
-            label_f: torch.Tensor = torch.concat(label_f).unsqueeze(0)
-            attention_mask: torch.Tensor = torch.ones(elem.shape[1], dtype=torch.long).unsqueeze(0)
+            elem: torch.Tensor = torch.concat(elem)
+            label_f: torch.Tensor = torch.concat(label_f)
+            attention_mask: torch.Tensor = torch.ones(elem.shape, dtype=torch.long)
+            
+            # Apply padding
+            elem = torch.cat((elem, torch.Tensor([self.tokenizer.pad_token_type_id] * (self.max_length - len(elem))).long()))
+            label_f = torch.cat((label_f, (torch.zeros(self.max_length - len(label_f), dtype=torch.long) - 100)))
+            attention_mask = torch.cat((attention_mask, torch.zeros(self.max_length - len(attention_mask), dtype=torch.long)))
             return {
                 'input_ids': elem,
                 'labels': label_f,
@@ -92,7 +97,11 @@ class MixedExperiment(Experiment):
             indices_random = torch.bernoulli(torch.full(labels.shape, 0.5)).bool() & masked_indices & ~indices_replaced
             random_words = torch.randint(len(self.tokenizer), labels.shape, dtype=torch.long)
             input_ids[indices_random] = random_words[indices_random]
-
+            return {
+                'input_ids': torch.cat((input_ids.squeeze(), self.tokenizer.pad_token_type_id * torch.ones((self.max_length - input_ids.shape[1]), dtype=torch.long))),
+                'labels': torch.cat((labels.squeeze(), torch.zeros(self.max_length - labels.shape[1], dtype=torch.long))),
+                'attention_mask': torch.cat((torch.ones(input_ids.shape[1], dtype=torch.long), torch.zeros(self.max_length - input_ids.shape[1], dtype=torch.long)))
+            }
             return {
                 'input_ids': input_ids,
                 'labels': labels,
@@ -113,28 +122,35 @@ class MixedExperiment(Experiment):
         :param sep: Seperator token for txt file (treated as .csv).
         :returns: Prepared dataset.
         """
+        # Add special tokens for data preparation
         self.tokenizer.add_tokens(["[REF-BEG]", "[REF-END]"])
         self.begin_index: int = self.tokenizer.vocab_size
         self.end_index: int = self.tokenizer.vocab_size + 1
-        df: pd.DataFrame = pd.read_csv(path, header=None, delimiter='NODELIMITERUSEDHEREJUSTREADLINEBYLINE')
-        df.columns = ['text']
-        data: datasets.Dataset = datasets.Dataset.from_pandas(df)
 
-        train_test = data.train_test_split(test_size=test)
-        test_valid = train_test['test'].train_test_split(test_size=val)
+        self.max_length: int = self.tokenizer.model_max_length
+        data: datasets.Dataset = datasets.load_dataset(
+            "text", data_files=path, sample_by="line")
+
+        train_test = data['train'].train_test_split(test_size=test)
+        print('HIER: ', len(train_test['train']))
+        print('HIER: ', len(train_test['test']))
+
         dataset = datasets.DatasetDict({
             'train': train_test['train'].map(
                 self.process_dataset,
-                new_fingerprint='2130897980712098357'
+                new_fingerprint='2130897980712098357',
+                remove_columns=['text']
             ),
-            'test': test_valid['test'].map(
+            'valid': train_test['test'].map(
                 self.process_dataset,
-                new_fingerprint='2130897980712098357'
-            ),
-            'valid': test_valid['train'].map(
-                self.process_dataset,
-                new_fingerprint='2130897980712098357'
+                new_fingerprint='2130897980712098357',
+                remove_columns=['text']
             )})
+        n_train: int = len(dataset['train'])
+        n_test: int = len(dataset['valid'])
+        logging.info(f"Dataset prepared! Length of training ds: {n_train}. Length of test ds: {n_test}")
+        print(dataset['train'])
+        print(dataset['valid'])
 
         return dataset
     
