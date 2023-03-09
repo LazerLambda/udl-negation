@@ -29,13 +29,9 @@ class MixedExperiment(Experiment):
     pre-training tuning.
     """
 
-    # TODO Remove indices
     def process_dataset(self, inputs: dict, mlm_probabilty: float =0.15):
         """"""
         tokenized: dict = self.tokenizer(inputs['text'], return_tensors='pt', max_length=self.max_length, truncation=True)
-
-        if 'input_ids' not in tokenized.keys():
-            print(tokenized)
 
         if (self.end_index in tokenized['input_ids']) and (self.begin_index in tokenized['input_ids']):
             tokenized = {k : v.squeeze() for k, v in tokenized.items()}
@@ -132,8 +128,6 @@ class MixedExperiment(Experiment):
             "text", data_files=path, sample_by="line")
 
         train_test = data['train'].train_test_split(test_size=test)
-        print('HIER: ', len(train_test['train']))
-        print('HIER: ', len(train_test['test']))
 
         dataset = datasets.DatasetDict({
             'train': train_test['train'].map(
@@ -143,14 +137,12 @@ class MixedExperiment(Experiment):
             ),
             'valid': train_test['test'].map(
                 self.process_dataset,
-                new_fingerprint='2130897980712098357',
+                new_fingerprint='9286897880712091234',
                 remove_columns=['text']
             )})
         n_train: int = len(dataset['train'])
         n_test: int = len(dataset['valid'])
         logging.info(f"Dataset prepared! Length of training ds: {n_train}. Length of test ds: {n_test}")
-        print(dataset['train'])
-        print(dataset['valid'])
 
         return dataset
     
@@ -158,7 +150,7 @@ class MixedExperiment(Experiment):
         """"""
         f:IO = open(path_orig, 'r')
         counter: int = 0
-        for line in f:
+        for _ in f:
             counter += 1
         f.close()
         indices: np.ndarray = np.random.choice(range(counter), amount, replace=False)

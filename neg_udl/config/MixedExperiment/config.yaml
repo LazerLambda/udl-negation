@@ -13,7 +13,7 @@ training:
   batch_size: 16
   lr: 5e-5
   eval_steps_n: 10000
-  eval_steps: True
+  eval_steps: False
 data:
   path: ./data/processed/mixed_experiment/debug.txt
   path_orig: ./data/processed/roberta_filtered/negation_aware_data.txt
@@ -21,4 +21,4 @@ data:
   test-prop: 0.1
   val-prop: 0.5
 
-debug: True
+debug: False

@@ -35,7 +35,7 @@ def run_experiment(cfg: DictConfig) -> None:
             model_tmp_path=cfg.model.tmp_path
         )
         experiment.prepare_dataset()
-        # experiment.run()
+        experiment.run()
 
 if __name__ == "__main__":
     os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
