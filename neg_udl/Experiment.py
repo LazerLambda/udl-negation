@@ -79,8 +79,8 @@ class Experiment:
         self.model_checkpoint: str = model_checkpoint
         self.model: AutoModelForMaskedLM = AutoModelForMaskedLM.from_pretrained(
             model_checkpoint)
-        if not device:
-            device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        if len(device) == 0:
+            device = torch.device('cpu') # torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
         self.device: str = device
         frozen_layer: Union[list, str] = "No frozen layers"
         if bool(freeze_layers):
@@ -91,7 +91,8 @@ class Experiment:
         self.tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained(
             model_checkpoint,
             use_fast=True,
-            max_len=512)
+            max_len=128)
+        self.model.resize_token_embeddings(len(self.tokenizer))
 
         self.optimizer: AdamW = AdamW(self.model.parameters(), lr=lr)
 
@@ -115,7 +116,7 @@ class Experiment:
         # Set Data Collator
         self.data_collator: Any = -1
         if data_collator == 'DataCollatorForTokenClassification':
-            self.data_collator = DataCollator4TC(self.tokenizer, padding='max_length', max_length=512)
+            self.data_collator = DataCollator4TC(self.tokenizer)
             logging.info(f"Initialized: {data_collator}")
         if data_collator == 'DataCollatorForLanguageModeling':
             self.data_collator = DataCollator4LM(self.tokenizer)

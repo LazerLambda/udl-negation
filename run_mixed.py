@@ -32,12 +32,13 @@ def run_experiment(cfg: DictConfig) -> None:
             eval_steps=cfg.training.eval_steps,
             model_target_path=cfg.model.target_path,
             freeze_layers=(cfg.model.freeze_lower, cfg.model.freeze_upper),
-            model_tmp_path=cfg.model.tmp_path
+            model_tmp_path=cfg.model.tmp_path,
+            # device='cpu'
         )
         experiment.prepare_dataset()
         experiment.run()
 
 if __name__ == "__main__":
     os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
-    torch.multiprocessing.set_start_method('spawn')
+    # torch.multiprocessing.set_start_method('spawn')
     run_experiment()

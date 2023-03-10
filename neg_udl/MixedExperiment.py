@@ -132,12 +132,12 @@ class MixedExperiment(Experiment):
         dataset = datasets.DatasetDict({
             'train': train_test['train'].map(
                 self.process_dataset,
-                new_fingerprint='2130897980712098357',
+                new_fingerprint='21308979807120983576',
                 remove_columns=['text']
             ),
             'valid': train_test['test'].map(
                 self.process_dataset,
-                new_fingerprint='9286897880712091234',
+                new_fingerprint='92868978807120912345',
                 remove_columns=['text']
             )})
         n_train: int = len(dataset['train'])
