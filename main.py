@@ -58,5 +58,5 @@ def run_experiment(cfg: DictConfig) -> None:
 
 if __name__ == "__main__":
     os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
-    torch.multiprocessing.set_start_method('spawn')
+    # torch.multiprocessing.set_start_method('spawn')
     run_experiment()
