@@ -73,6 +73,11 @@ class MixedExperiment(Experiment):
         else:
             # MLM-Masking, according to Devlin et al. 2018.
             input_ids = tokenized['input_ids']
+
+            # Replace possible BEG or END token with UNK (if data is damaged somewhere)
+            input_ids[input_ids == self.begin_index] = self.tokenizer.unk_token_id
+            input_ids[input_ids == self.end_index] = self.tokenizer.unk_token_id
+
             labels = input_ids.clone()
             # Sample mlm_probability% of all appropriate tokens.
             probability_matrix = torch.full(labels.shape, mlm_probabilty)
@@ -98,10 +103,6 @@ class MixedExperiment(Experiment):
                 'labels': torch.cat((labels.squeeze(), torch.zeros(self.max_length - labels.shape[1], dtype=torch.long))),
                 'attention_mask': torch.cat((torch.ones(input_ids.shape[1], dtype=torch.long), torch.zeros(self.max_length - input_ids.shape[1], dtype=torch.long)))
             }
-            return {
-                'input_ids': input_ids,
-                'labels': labels,
-                'attention_mask': torch.ones(input_ids.shape[1], dtype=torch.long).unsqueeze(0)}
 
     def load_custom_dataset(
             self,
@@ -132,12 +133,12 @@ class MixedExperiment(Experiment):
         dataset = datasets.DatasetDict({
             'train': train_test['train'].map(
                 self.process_dataset,
-                new_fingerprint='21308979807120983576',
+                new_fingerprint='213089798071209835765',
                 remove_columns=['text']
             ),
             'valid': train_test['test'].map(
                 self.process_dataset,
-                new_fingerprint='92868978807120912345',
+                new_fingerprint='928689788071209123455',
                 remove_columns=['text']
             )})
         n_train: int = len(dataset['train'])
