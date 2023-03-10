@@ -274,6 +274,7 @@ class Experiment:
         for epoch in range(self.num_epochs):
             for batch in train_dataloader:
                 batch = {k: v.to(self.device) for k, v in batch.items()}
+                print(batch['input_ids'].shape, batch['attention_mask'].shape, batch['labels'].shape)
                 outputs = self.model(**batch)
                 loss = outputs.loss
                 loss.backward()

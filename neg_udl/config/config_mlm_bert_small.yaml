@@ -15,6 +15,6 @@ training:
   eval_steps_n: 2
   eval_steps: True
 data:
-  path: ./data/processed/roberta_filtered/debug.txt # ./data/processed/data.txt
+  path: ./data/processed/roberta_filtered/debug_large.txt # ./data/processed/data.txt
   test-prop: 0.05
   blocksize: 128
