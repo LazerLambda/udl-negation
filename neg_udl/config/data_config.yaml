@@ -19,3 +19,5 @@ preprocessing:
       - owt
       - cc_news
       - bc
+  final:
+    data_path: ../data/processed/negation_aware_data.txt

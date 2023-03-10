@@ -7,6 +7,7 @@ MIT-License
 """
 
 import os
+import pathlib
 import re
 from os import listdir
 from os.path import isfile, join
@@ -84,11 +85,14 @@ def combine_data(files: list, data_name: str) -> None:
     :param files: Files that will be combined.
     :param data_name: Name of final data file.
     """
-    f: IO = open(data_name, 'w')
+    head, _ = os.path.split(data_name)
+    pathlib.Path(head).mkdir(parents=True, exist_ok=True)
+    final_data: IO = open(data_name, 'w')
     for file in files:
         f_tmp: IO = open(file, 'r')
+        final_data.write(f_tmp.read())
         f_tmp.close()
-    f.close()
+    final_data.close()
 
 
 @hydra.main(version_base=None, config_path="../config", config_name="data_config")
@@ -103,12 +107,15 @@ def main(cfg: DictConfig):
         for csv, txt, tail in paths:
             path_tmp: str = os.path.join(cfg.preprocessing.tmp.tmp_folder, tail + '_neg.txt')
             tmp_names.append(path_tmp)
-            make_data(
-                path_tmp,
-                txt,
-                csv,
-                cfg.preprocessing.tmp.rolling_window)
-
+            # make_data(
+            #     path_tmp,
+            #     txt,
+            #     csv,
+            #     cfg.preprocessing.tmp.rolling_window)
+    tmp_names.sort()
+    combine_data(
+        tmp_names,
+        cfg.preprocessing.final.data_path)
 
 if __name__ == "__main__":
     main()

@@ -77,7 +77,7 @@ def get_ranges(n: int, p: int, lower: int = 0) -> List[Tuple[int, int]]:
     return list(map(lambda e: (e[0] * e[1], upper_bound(e) if upper_bound(e) != n - diff else n), ranges))
 
 
-@hydra.main(version_base=None, config_path="../config", config_name="data_config")
+@hydra.main(version_base=None, config_path="../config", config_name="data_config_large")
 def main(cfg: DictConfig) -> None:
     """Run Main.
 

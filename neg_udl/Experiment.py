@@ -16,6 +16,7 @@ from typing import Any, Optional, Union
 import life_after_bert
 import numpy as np
 import torch
+import wandb
 from datasets import Dataset, load_dataset
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
@@ -24,8 +25,6 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer
 from transformers import DataCollatorForLanguageModeling as DataCollator4LM
 from transformers import DataCollatorForTokenClassification as DataCollator4TC
 from transformers import get_scheduler
-
-import wandb
 
 
 class Experiment:
