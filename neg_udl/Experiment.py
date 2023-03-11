@@ -80,7 +80,7 @@ class Experiment:
         self.model: AutoModelForMaskedLM = AutoModelForMaskedLM.from_pretrained(
             model_checkpoint)
         if len(device) == 0:
-            device = torch.device('cpu') # torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+            device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
         self.device: str = device
         frozen_layer: Union[list, str] = "No frozen layers"
         if bool(freeze_layers):

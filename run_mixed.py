@@ -32,8 +32,7 @@ def run_experiment(cfg: DictConfig) -> None:
             eval_steps=cfg.training.eval_steps,
             model_target_path=cfg.model.target_path,
             freeze_layers=(cfg.model.freeze_lower, cfg.model.freeze_upper),
-            model_tmp_path=cfg.model.tmp_path,
-            # device='cpu'
+            model_tmp_path=cfg.model.tmp_path
         )
         experiment.prepare_dataset()
         experiment.run()

@@ -10,12 +10,12 @@ model:
   tmp_path: ./models/
 training:
   epochs: 3
-  batch_size: 20
+  batch_size: 24
   lr: 5e-5
   eval_steps_n: 10000
   eval_steps: True
 data:
-  path: ./data/processed/mixed_experiment/debug.txt
+  path: ./data/processed/mixed_experiment/data.txt
   path_orig: ./data/processed/roberta_filtered/negation_aware_data.txt
   path_synth: ./data/processed/wn_neg_processed/data_wn_masked.txt
   test-prop: 0.05

@@ -64,6 +64,7 @@ class MixedExperiment(Experiment):
             
             # Apply padding
             elem = torch.cat((elem, torch.Tensor([self.tokenizer.pad_token_type_id] * (self.max_length - len(elem))).long()))
+            assert (not self.begin_index in elem) or (not self.end_index in elem), (str(inputs['text']) + str(elem))
             label_f = torch.cat((label_f, (torch.zeros(self.max_length - len(label_f), dtype=torch.long) - 100)))
             attention_mask = torch.cat((attention_mask, torch.zeros(self.max_length - len(attention_mask), dtype=torch.long)))
             return {
@@ -120,7 +121,8 @@ class MixedExperiment(Experiment):
         :returns: Prepared dataset.
         """
         # Add special tokens for data preparation
-        self.tokenizer.add_tokens(["[REF-BEG]", "[REF-END]"])
+        num_added: int = self.tokenizer.add_tokens(["[REF-BEG]", "[REF-END]"])
+        self.model.resize_token_embeddings(len(self.tokenizer) + num_added)
         self.begin_index: int = self.tokenizer.vocab_size
         self.end_index: int = self.tokenizer.vocab_size + 1
 
