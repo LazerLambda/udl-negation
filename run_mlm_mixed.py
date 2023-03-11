@@ -18,7 +18,7 @@ load_dotenv()
 
 @hydra.main(version_base=None, config_path="neg_udl/config/MLMMixed", config_name="config")
 def run_experiment(cfg: DictConfig) -> None:
-    if cfg.experiment == "MixedExperiment":
+    if cfg.experiment == "MLMNegMixed":
         experiment: MLMNegMixed = MLMNegMixed(
             name=cfg.name,
             model_checkpoint=cfg.model.name,

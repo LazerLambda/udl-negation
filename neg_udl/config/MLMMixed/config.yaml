@@ -1,7 +1,7 @@
 experiment: MLMNegMixed
 name: MLM / Mixed Experiment
 seed: 42
-data_collator: DataCollatorForTokenClassification
+data_collator: DataCollatorForLanguageModeling
 model:
   name: prajjwal1/bert-small
   freeze_lower: 0
