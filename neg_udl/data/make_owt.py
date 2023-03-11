@@ -20,8 +20,6 @@ import spacy
 from datasets import load_dataset
 from omegaconf import DictConfig
 
-TARGET_PATH: str = None
-
 
 def process_owt(args: tuple, save_step: int = 2000) -> None:
     """Pre-Process Open-Web-Text Dataset.
