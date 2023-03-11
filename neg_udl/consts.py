@@ -1,6 +1,4 @@
-"""
-Constants File.
-"""
+"""Constants File."""
 
 # Tokenizer
 REF_BEG_TOKEN: str = "[REF-BEG]"

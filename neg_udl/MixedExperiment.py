@@ -7,14 +7,14 @@ Philipp Koch, 2023
 MIT-License
 """
 
-import os
-from typing import Any, IO
-
 import logging
-import datasets
-import pandas as pd
+import os
 import pathlib
+from typing import IO, Dict
+
+import datasets
 import numpy as np
+import pandas as pd
 import torch
 
 from .data.make_dataset import main
@@ -29,12 +29,21 @@ class MixedExperiment(Experiment):
     pre-training tuning.
     """
 
-    def process_dataset(self, inputs: dict, mlm_probabilty: float =0.15):
-        """"""
+    def process_dataset(self, inputs: dict, mlm_probability: float = 0.15) -> Dict[str, torch.Tensor]:
+        """Pre-Process Dataset.
+
+        :param inputs: Dictionary formm dataset with text under key 'text'.
+        :param mlm_probability: Probability for masking tokens on entire text.
+            e.g. 0.15 -> 15 % of all tokens will be chosen of which 80% will be masked
+            10% will be randomly replaced and 10% will remain unchanged. According to
+            Devlin et al. 2018.
+        :returns: Dictionary of 'input_ids', 'attention_mask' and 'labels' and their
+            respective tensors.
+        """
         tokenized: dict = self.tokenizer(inputs['text'], return_tensors='pt', max_length=self.max_length, truncation=True)
 
         if (self.end_index in tokenized['input_ids']) and (self.begin_index in tokenized['input_ids']):
-            tokenized = {k : v.squeeze() for k, v in tokenized.items()}
+            tokenized = {k: v.squeeze() for k, v in tokenized.items()}
 
             # Find masked word in reference sequence
             bool_vector: torch.Tensor = torch.ones(len(tokenized['input_ids']), dtype=torch.bool)
@@ -50,25 +59,25 @@ class MixedExperiment(Experiment):
             label = label[1::]
             label = label[:-1]
 
-            # Get split sequences 
+            # Get split sequences
             ind: int = (orig == self.tokenizer.mask_token_id).nonzero(as_tuple=True)[0].item()
             label_f: tuple = (
                 torch.zeros(ind, dtype=torch.long) - 100, label,
-                torch.zeros(len(orig[(ind + 1):: ]), dtype=torch.long) - 100)
-            elem: tuple = (orig[0:ind], torch.tensor([self.tokenizer.mask_token_id] * len(label)), orig[(ind + 1):: ])
+                torch.zeros(len(orig[(ind + 1)::]), dtype=torch.long) - 100)
+            elem: tuple = (orig[0:ind], torch.tensor([self.tokenizer.mask_token_id] * len(label)), orig[(ind + 1)::])
 
             # Concatenate splitted sequences and prepare for return
-            elem: torch.Tensor = torch.concat(elem)
-            label_f: torch.Tensor = torch.concat(label_f)
-            attention_mask: torch.Tensor = torch.ones(elem.shape, dtype=torch.long)
-            
+            elem_tensor: torch.Tensor = torch.concat(elem)
+            label_f_tensor: torch.Tensor = torch.concat(label_f)
+            attention_mask: torch.Tensor = torch.ones(elem_tensor.shape, dtype=torch.long)
+
             # Apply padding
             elem = torch.cat((elem, torch.Tensor([self.tokenizer.pad_token_type_id] * (self.max_length - len(elem))).long()))
-            label_f = torch.cat((label_f, (torch.zeros(self.max_length - len(label_f), dtype=torch.long) - 100)))
+            label_f_tensor = torch.cat((label_f_tensor, (torch.zeros(self.max_length - len(label_f_tensor), dtype=torch.long) - 100)))
             attention_mask = torch.cat((attention_mask, torch.zeros(self.max_length - len(attention_mask), dtype=torch.long)))
             return {
                 'input_ids': elem,
-                'labels': label_f,
+                'labels': label_f_tensor,
                 'attention_mask': attention_mask}
         else:
             # MLM-Masking, according to Devlin et al. 2018.
@@ -80,10 +89,10 @@ class MixedExperiment(Experiment):
 
             labels = input_ids.clone()
             # Sample mlm_probability% of all appropriate tokens.
-            probability_matrix = torch.full(labels.shape, mlm_probabilty)
+            probability_matrix = torch.full(labels.shape, mlm_probability)
             special_tokens_mask = [
-                    self.tokenizer.get_special_tokens_mask(val, already_has_special_tokens=True) for val in labels.tolist()
-                ]
+                self.tokenizer.get_special_tokens_mask(val, already_has_special_tokens=True) for val in labels.tolist()
+            ]
             special_tokens_mask = torch.tensor(special_tokens_mask, dtype=torch.bool)
 
             probability_matrix.masked_fill_(special_tokens_mask, value=0.0)
@@ -99,9 +108,17 @@ class MixedExperiment(Experiment):
             random_words = torch.randint(len(self.tokenizer), labels.shape, dtype=torch.long)
             input_ids[indices_random] = random_words[indices_random]
             return {
-                'input_ids': torch.cat((input_ids.squeeze(), self.tokenizer.pad_token_type_id * torch.ones((self.max_length - input_ids.shape[1]), dtype=torch.long))),
+                'input_ids': torch.cat(
+                    (
+                        input_ids.squeeze(),
+                        self.tokenizer.pad_token_type_id * torch.ones((self.max_length - input_ids.shape[1]), dtype=torch.long)
+                    )),
                 'labels': torch.cat((labels.squeeze(), torch.zeros(self.max_length - labels.shape[1], dtype=torch.long))),
-                'attention_mask': torch.cat((torch.ones(input_ids.shape[1], dtype=torch.long), torch.zeros(self.max_length - input_ids.shape[1], dtype=torch.long)))
+                'attention_mask': torch.cat(
+                    (
+                        torch.ones(input_ids.shape[1], dtype=torch.long),
+                        torch.zeros(self.max_length - input_ids.shape[1], dtype=torch.long)
+                    ))
             }
 
     def load_custom_dataset(
@@ -133,12 +150,12 @@ class MixedExperiment(Experiment):
         dataset = datasets.DatasetDict({
             'train': train_test['train'].map(
                 self.process_dataset,
-                new_fingerprint='213089798071209835765',
+                new_fingerprint='213089798071209835769',
                 remove_columns=['text']
             ),
             'valid': train_test['test'].map(
                 self.process_dataset,
-                new_fingerprint='928689788071209123455',
+                new_fingerprint='928689788071209123459',
                 remove_columns=['text']
             )})
         n_train: int = len(dataset['train'])
@@ -146,10 +163,19 @@ class MixedExperiment(Experiment):
         logging.info(f"Dataset prepared! Length of training ds: {n_train}. Length of test ds: {n_test}")
 
         return dataset
-    
+
     def create_mixed_dataset(self, amount: int, path_orig: str, path_synth: str, path_target: str) -> None:
-        """"""
-        f:IO = open(path_orig, 'r')
+        """Create Mixed Dataset of Original and Synthetic Data.
+
+        Count lines of original dataset and sample in the size of the synthetic dataset for equal
+        representation in the data. Combine both datasets and shuffle dataset.
+
+        :param amount: Amount of repetition of each line.
+        :param path_orig: Path to original dataset.
+        :param path_synth: Path to synthetic dataset.
+        :param path_target: Path to target dataset.
+        """
+        f: IO = open(path_orig, 'r')
         counter: int = 0
         for _ in f:
             counter += 1
@@ -199,6 +225,5 @@ class MixedExperiment(Experiment):
             self.create_mixed_dataset(amount, data_path_orig, data_path_synth, data_path)
         else:
             logging.info(f"Dataset at {data_path} exist!")
-
 
         self.dataset = self.load_custom_dataset(data_path, test=test_prop, val=val_prop)
