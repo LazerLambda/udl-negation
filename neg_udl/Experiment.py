@@ -294,8 +294,7 @@ class Experiment:
                                 'antonym-negation': eval_antonym_negation
                             })
                 counter += 1
-            # TODO: Eval
-            # - GLUE ?
+
             if not self.eval_steps:
                 eval_total_loss = self._eval_test(eval_dataloader)
                 eval_antonym_negation = self._eval_antonym_negation()
