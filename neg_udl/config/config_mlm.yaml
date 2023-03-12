@@ -12,7 +12,7 @@ training:
   epochs: 5
   batch_size: 16
   lr: 5e-5
-  eval_steps_n: 10000
+  eval_steps_n: 10
   eval_steps: True
 data:
   path: './data/processed/data.txt'

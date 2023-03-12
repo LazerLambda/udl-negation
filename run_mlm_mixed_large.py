@@ -8,8 +8,7 @@ MIT-License
 
 import hydra
 from neg_udl.Experiment import Experiment
-from neg_udl.NegDataOnlyExperiment import NegDataOnlyExperiment
-from neg_udl.MLMExperiment import MLMExperiment
+from neg_udl.MLMNegMixed import MLMNegMixed
 from omegaconf import DictConfig
 import os
 import torch
@@ -17,28 +16,10 @@ import torch
 from dotenv import load_dotenv
 load_dotenv()
 
-@hydra.main(version_base=None, config_path="neg_udl/config", config_name="config_mlm_bert_small")
+@hydra.main(version_base=None, config_path="neg_udl/config/MLMMixed", config_name="config_large")
 def run_experiment(cfg: DictConfig) -> None:
-    if cfg.experiment == "NegDataOnlyExperiment":
-        experiment: NegDataOnlyExperiment = NegDataOnlyExperiment(
-            name=cfg.name,
-            model_checkpoint=cfg.model.name,
-            dataset_config=dict(cfg.data),
-            data_collator=cfg.data_collator,
-            seed=cfg.seed,
-            num_epochs=cfg.training.epochs,
-            batch_size=cfg.training.batch_size,
-            lr=cfg.training.lr,
-            steps=cfg.training.eval_steps_n,
-            eval_steps=cfg.training.eval_steps,
-            model_target_path=cfg.model.target_path,
-            freeze_layers=(cfg.model.freeze_lower, cfg.model.freeze_upper),
-            model_tmp_path=cfg.model.tmp_path
-        )
-        experiment.prepare_dataset()
-        experiment.run()
-    if cfg.experiment == "MLMExperiment":
-        experiment: MLMExperiment = MLMExperiment(
+    if cfg.experiment == "MLMNegMixed":
+        experiment: MLMNegMixed = MLMNegMixed(
             name=cfg.name,
             model_checkpoint=cfg.model.name,
             dataset_config=dict(cfg.data),

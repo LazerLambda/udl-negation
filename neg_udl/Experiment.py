@@ -79,7 +79,7 @@ class Experiment:
         self.model_checkpoint: str = model_checkpoint
         self.model: AutoModelForMaskedLM = AutoModelForMaskedLM.from_pretrained(
             model_checkpoint)
-        if not device:
+        if len(device) == 0:
             device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
         self.device: str = device
         frozen_layer: Union[list, str] = "No frozen layers"
@@ -91,7 +91,8 @@ class Experiment:
         self.tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained(
             model_checkpoint,
             use_fast=True,
-            max_len=512)
+            max_len=128)
+        self.model.resize_token_embeddings(len(self.tokenizer))
 
         self.optimizer: AdamW = AdamW(self.model.parameters(), lr=lr)
 
@@ -135,6 +136,7 @@ class Experiment:
         # Set Up Logging
         wandb.init(config={
             'experiment': name,
+            'seed': seed,
             'model checkpoint': self.model_checkpoint,
             'model': self.model.config.to_dict(),
             ##
