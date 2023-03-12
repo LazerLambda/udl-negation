@@ -136,6 +136,7 @@ class Experiment:
         # Set Up Logging
         wandb.init(config={
             'experiment': name,
+            'seed': seed,
             'model checkpoint': self.model_checkpoint,
             'model': self.model.config.to_dict(),
             ##
