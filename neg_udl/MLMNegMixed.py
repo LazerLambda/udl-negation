@@ -109,7 +109,6 @@ class MLMNegMixed(Experiment):
         data_path_synth: str = self.dataset_config['path_synth']
         test_prop: float = self.dataset_config['test-prop']
         amount: int = self.dataset_config['amount']
-        fingerprint: int = self.dataset_config['fingerprint']
         mp: bool = self.dataset_config['mp_activate']
         self.blocksize = self.dataset_config['blocksize']
 
@@ -132,7 +131,6 @@ class MLMNegMixed(Experiment):
             tokenize_function,
             batched=True,
             num_proc=p,
-            new_fingerprint=1233,
             remove_columns=["text"])
         logging.info("Dataset tokenized!")
 
@@ -140,7 +138,6 @@ class MLMNegMixed(Experiment):
             self._group_texts,
             batched=True,
             batch_size=1000,
-            new_fingerprint=1234,
             num_proc=p
         )
         n_train: int = len(self.dataset['train'])
