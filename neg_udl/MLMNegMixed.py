@@ -108,12 +108,14 @@ class MLMNegMixed(Experiment):
         data_path_orig: str = self.dataset_config['path_orig']
         data_path_synth: str = self.dataset_config['path_synth']
         test_prop: float = self.dataset_config['test-prop']
+        amount: int = self.dataset_config['amount']
+        fingerprint: int = self.dataset_config['fingerprint']
         mp: bool = self.dataset_config['mp_activate']
         self.blocksize = self.dataset_config['blocksize']
 
         if not os.path.exists(data_path):  # Check if dataset exists
             logging.info(f"Dataset at {data_path} does not exist!")
-            amount: int = main(data_path_synth, amount=1, masked=False)
+            amount: int = main(data_path_synth, amount=amount, masked=False)
             self.create_mixed_dataset(amount, data_path_orig, data_path_synth, data_path)
         else:
             logging.info(f"Dataset at {data_path} exist!")
@@ -126,13 +128,19 @@ class MLMNegMixed(Experiment):
             'valid': train_test['test']})
         tokenize_function: Callable = lambda examples: self.tokenizer(examples["text"])
         p: int = multiprocessing.cpu_count() if mp else 1
-        tokenized_datasets: datasets.Dataset = dataset.map(tokenize_function, batched=True, num_proc=p, remove_columns=["text"])
+        tokenized_datasets: datasets.Dataset = dataset.map(
+            tokenize_function,
+            batched=True,
+            num_proc=p,
+            new_fingerprint=fingerprint,
+            remove_columns=["text"])
         logging.info("Dataset tokenized!")
 
         self.dataset = tokenized_datasets.map(
             self._group_texts,
             batched=True,
             batch_size=1000,
+            new_fingerprint=fingerprint,
             num_proc=p
         )
         n_train: int = len(self.dataset['train'])
