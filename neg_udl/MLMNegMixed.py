@@ -132,7 +132,7 @@ class MLMNegMixed(Experiment):
             tokenize_function,
             batched=True,
             num_proc=p,
-            new_fingerprint=fingerprint,
+            new_fingerprint=1233,
             remove_columns=["text"])
         logging.info("Dataset tokenized!")
 
@@ -140,7 +140,7 @@ class MLMNegMixed(Experiment):
             self._group_texts,
             batched=True,
             batch_size=1000,
-            new_fingerprint=fingerprint,
+            new_fingerprint=1234,
             num_proc=p
         )
         n_train: int = len(self.dataset['train'])
