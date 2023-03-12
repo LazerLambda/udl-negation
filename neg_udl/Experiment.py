@@ -314,7 +314,14 @@ class Experiment:
                     'optimizer_state_dict': self.optimizer.state_dict(),
                 },
                 self.model_tmp_path)
+        eval_total_loss = self._eval_test(eval_dataloader)
+        eval_antonym_negation = self._eval_antonym_negation()
 
+        wandb.log(
+            {
+                'total-loss': eval_total_loss,
+                'antonym-negation': eval_antonym_negation
+            })
         torch.save(
             {
                 'epoch': epoch,  # TODO: Rm?
