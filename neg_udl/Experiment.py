@@ -273,12 +273,12 @@ class Experiment:
         head, _ = os.path.split(self.path_target)
         best_model_str: str = os.path.join(
             head,
-            'N-0-best-' + str(self.model.config._name_or_path).replace('/', '-'))
+            'N-best-' + str(self.model.config._name_or_path).replace('/', '-'))
         self.model.save_pretrained(best_model_str)
 
         self.model.train()
         counter: int = 1
-        for epoch in range(self.num_epochs):
+        for _epoch in range(self.num_epochs):
             for batch in train_dataloader:
                 batch = {k: v.to(self.device) for k, v in batch.items()}
                 outputs = self.model(**batch)
@@ -313,10 +313,6 @@ class Experiment:
 
             # Check for best model:
             if eval_antonym_negation > best_eval:
-                head, _ = os.path.split(best_model_str)
-                best_model_str = os.path.join(
-                    head,
-                    'N-' + str(epoch) + '-best-' + str(self.model.config._name_or_path).replace('/', '-'))
                 self.model.save_pretrained(best_model_str)
                 logging.info('Saved best trained model at:' + best_model_str)
 
