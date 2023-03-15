@@ -107,7 +107,7 @@ def main(model_path: str, model_id: str = "prajjwal1/bert-small") -> dict:
     """
     tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained(model_id)
     data_collator: DataCollator = DataCollatorWithPadding(tokenizer=tokenizer)
-    tasks: list = ['wnli', 'cola', 'mnli', 'mnli_matched', 'mnli_mismatched', 'mrpc', 'qnli', 'qqp', 'rte', 'sst2', 'stsb']
+    tasks: list = ['wnli', 'cola', 'mrpc', 'qnli', 'qqp', 'rte', 'sst2', 'stsb']
 
     training_args = TrainingArguments(
         "test-trainer",
