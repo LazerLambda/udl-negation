@@ -169,7 +169,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '-p',
         '--path',
-        default="../model/N-bests-prajjwal1-bert-small.pt",
+        default="../model/N-prajjwal1-bert-small.pt",
         type=str
     )
     parser.add_argument(
