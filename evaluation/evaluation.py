@@ -32,7 +32,7 @@ def get_tokenizer(task: str, tokenizer: AutoTokenizer) -> Callable:
     """
     if task in ['wnli', 'mrpc', 'rte', 'stsb']:
         return lambda e: tokenizer(e["sentence1"], e["sentence2"], truncation=True)
-    if task == ['mnli_mismatched', 'mnli', 'mnli_matched']:
+    if task in ['mnli_mismatched', 'mnli', 'mnli_matched']:
         return lambda e: tokenizer(e["premise"], e["hypothesis"], truncation=True)
     if task in ['sst2', 'cola']:
         return lambda e: tokenizer(e["sentence"], truncation=True)
