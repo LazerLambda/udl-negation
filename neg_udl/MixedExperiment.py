@@ -73,7 +73,8 @@ class MixedExperiment(Experiment):
 
             # Apply padding
             elem = torch.cat((elem, torch.Tensor([self.tokenizer.pad_token_type_id] * (self.max_length - len(elem))).long()))
-            label_f_tensor = torch.cat((label_f_tensor, (torch.zeros(self.max_length - len(label_f_tensor), dtype=torch.long) - 100)))
+            assert (self.begin_index not in elem) or (self.end_index not in elem), (str(inputs['text']) + str(elem))
+            label_f = torch.cat((label_f, (torch.zeros(self.max_length - len(label_f), dtype=torch.long) - 100)))
             attention_mask = torch.cat((attention_mask, torch.zeros(self.max_length - len(attention_mask), dtype=torch.long)))
             return {
                 'input_ids': elem,
