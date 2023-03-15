@@ -114,7 +114,7 @@ class MLMNegMixed(Experiment):
 
         if not os.path.exists(data_path):  # Check if dataset exists
             logging.info(f"Dataset at {data_path} does not exist!")
-            amount: int = main(data_path_synth, amount=amount, masked=False)
+            amount = main(data_path_synth, amount=amount, masked=False)
             self.create_mixed_dataset(amount, data_path_orig, data_path_synth, data_path)
         else:
             logging.info(f"Dataset at {data_path} exist!")

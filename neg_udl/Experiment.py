@@ -105,12 +105,12 @@ class Experiment:
 
         self.path_target: str = os.path.join(
             model_target_path,
-            'N-' + str(self.model.config._name_or_path).replace('/', '-') + '.pt')
+            'N-' + str(self.model.config._name_or_path).replace('/', '-'))
         pathlib.Path(model_target_path).mkdir(parents=True, exist_ok=True)
 
-        self.model_tmp_path: str = os.path.join(
-            model_tmp_path,
-            'TMP-N-' + str(self.model.config._name_or_path).replace('/', '-') + '.pt')
+        # self.model_tmp_path: str = os.path.join(
+        #     model_tmp_path,
+        #     'TMP-N-' + str(self.model.config._name_or_path).replace('/', '-') + '.pt')
         pathlib.Path(model_tmp_path).mkdir(parents=True, exist_ok=True)
 
         # Set Data Collator
@@ -269,6 +269,12 @@ class Experiment:
                 'total-loss': eval_total_loss,
                 'antonym-negation': eval_antonym_negation
             })
+        best_eval: float = eval_antonym_negation
+        head, _ = os.path.split(self.path_target)
+        best_model_str: str = os.path.join(
+            head,
+            'N-0-best-' + str(self.model.config._name_or_path).replace('/', '-'))
+        self.model.save_pretrained(best_model_str)
 
         self.model.train()
         counter: int = 1
@@ -305,14 +311,22 @@ class Experiment:
                         'antonym-negation': eval_antonym_negation
                     })
 
-            # log.info(total_loss)
-            torch.save(
-                {
-                    'epoch': epoch,
-                    'model_state_dict': self.model.state_dict(),
-                    'optimizer_state_dict': self.optimizer.state_dict(),
-                },
-                self.model_tmp_path)
+            # Check for best model:
+            if eval_antonym_negation > best_eval:
+                head, _ = os.path.split(best_model_str)
+                best_model_str = os.path.join(
+                    head,
+                    'N-' + str(epoch) + '-best-' + str(self.model.config._name_or_path).replace('/', '-'))
+                self.model.save_pretrained(best_model_str)
+                logging.info('Saved best trained model at:' + best_model_str)
+
+            # torch.save(
+            #     {
+            #         'epoch': epoch,
+            #         'model_state_dict': self.model.state_dict(),
+            #         'optimizer_state_dict': self.optimizer.state_dict(),
+            #     },
+            #     self.model_tmp_path)
         eval_total_loss = self._eval_test(eval_dataloader)
         eval_antonym_negation = self._eval_antonym_negation()
 
@@ -321,14 +335,10 @@ class Experiment:
                 'total-loss': eval_total_loss,
                 'antonym-negation': eval_antonym_negation
             })
-        torch.save(
-            {
-                'epoch': epoch,  # TODO: Rm?
-                'model_state_dict': self.model.state_dict(),
-                'optimizer_state_dict': self.optimizer.state_dict(),  # TODO: Rm?
-            },
-            self.path_target)
+
+        # Save last model
+        self.model.save_pretrained(self.path_target)
         logging.info('Saved trained model at:' + self.path_target)
 
-        os.remove(self.model_tmp_path)
-        logging.info('Training checkpoint deleted.')
+        # os.remove(self.model_tmp_path)
+        # logging.info('Training checkpoint deleted.')
