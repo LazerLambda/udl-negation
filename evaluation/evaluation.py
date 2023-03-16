@@ -110,7 +110,7 @@ def main(model_path: str, result_path: str, model_id: str = "prajjwal1/bert-smal
     data_collator: DataCollator = DataCollatorWithPadding(
             tokenizer=tokenizer,
             max_length=512)
-    tasks: list = ['wnli', 'cola', 'mrpc', 'qnli', 'qqp', 'rte', 'sst2', 'stsb']
+    tasks: list = ['wnli', 'cola', 'mrpc', 'qnli', 'qqp', 'rte', 'sst2']
 
     training_args = TrainingArguments(
         "test-trainer",
