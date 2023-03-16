@@ -31,15 +31,15 @@ def get_tokenizer(task: str, tokenizer: AutoTokenizer) -> Callable:
         depending on task.
     """
     if task in ['wnli', 'mrpc', 'rte', 'stsb']:
-        return lambda e: tokenizer(e["sentence1"], e["sentence2"], truncation=True)
+        return lambda e: tokenizer(e["sentence1"], e["sentence2"], truncation=True, max_length=512)
     if task in ['mnli_mismatched', 'mnli', 'mnli_matched']:
-        return lambda e: tokenizer(e["premise"], e["hypothesis"], truncation=True)
+        return lambda e: tokenizer(e["premise"], e["hypothesis"], truncation=True, max_length=512)
     if task in ['sst2', 'cola']:
-        return lambda e: tokenizer(e["sentence"], truncation=True)
+        return lambda e: tokenizer(e["sentence"], truncation=True, max_length=512)
     if task == 'qqp':
-        return lambda e: tokenizer(e["question1"], e["question2"], truncation=True)
+        return lambda e: tokenizer(e["question1"], e["question2"], truncation=True, max_length=512)
     if task == 'qnli':
-        return lambda e: tokenizer(e["question"], e["sentence"], truncation=True)
+        return lambda e: tokenizer(e["question"], e["sentence"], truncation=True, max_length=512)
     else:
         raise Exception(f"Wrong task! Obtained argument: '{task}'.")
 
@@ -106,7 +106,9 @@ def main(model_path: str, model_id: str = "prajjwal1/bert-small") -> dict:
         original and tuned model.)
     """
     tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained(model_id)
-    data_collator: DataCollator = DataCollatorWithPadding(tokenizer=tokenizer)
+    data_collator: DataCollator = DataCollatorWithPadding(
+            tokenizer=tokenizer,
+            max_length=512)
     tasks: list = ['wnli', 'cola', 'mrpc', 'qnli', 'qqp', 'rte', 'sst2', 'stsb']
 
     training_args = TrainingArguments(
@@ -116,7 +118,8 @@ def main(model_path: str, model_id: str = "prajjwal1/bert-small") -> dict:
         weight_decay=0.1,
         num_train_epochs=10,
         warmup_ratio=0.06,
-        report_to="none"
+        report_to="none",
+        save_strategy='no'
     )
     results: dict = {}
     n: int = len(tasks)
