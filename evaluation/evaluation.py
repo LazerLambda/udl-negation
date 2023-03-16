@@ -97,10 +97,11 @@ def train_and_eval(
     return metric.compute(predictions=preds, references=predictions.label_ids)
 
 
-def main(model_path: str, model_id: str = "prajjwal1/bert-small") -> dict:
+def main(model_path: str, result_path: str, model_id: str = "prajjwal1/bert-small") -> dict:
     """Run Program.
 
     :param model_path: Model path to .pt file.
+    :param result_path: Path to results .json file.s
     :param model_id: Model identifier string (transformers library).
     :returns: Dictionary with results (keys for tasks with another dictionary for
         original and tuned model.)
@@ -157,6 +158,8 @@ def main(model_path: str, model_id: str = "prajjwal1/bert-small") -> dict:
             'theirs': result_theirs
         }
         results[task] = tmp_dict
+        json.dump(results, open(f"{result_path}.json", "w"))
+        logging.info(f"Results saved to '{result_path}.json'!")
     return results
 
 
@@ -188,6 +191,6 @@ if __name__ == "__main__":
     args: argparse.Namespace = parser.parse_args()
     logging.basicConfig(level=args.loglevel)
     logging.info(f"Args provided:\n\t-path: '{args.path}'\n\t-model: '{args.m__model}'\n\t-result-path: '{args.result_path}'\n\t-Log-Level: INFO")
-    results: dict = main(model_path=args.path, model_id=args.m__model)
+    results: dict = main(model_path=args.path, result_path=args.result_path, model_id=args.m__model)
     json.dump(results, open(f"{args.result_path}.json", "w"))
     logging.info(f"Results saved to '{args.result_path}.json'!")
