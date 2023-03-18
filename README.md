@@ -1,7 +1,7 @@
 UDL-Negation
 ==============================
 
-Experiments to improve the weakness of misunderstanding of negation in transformers.
+Experiments to improve the weakness of misunderstanding the concept of negation in encoder-based models.
 
 # Requirements
 
