@@ -51,16 +51,15 @@ Project Organization
 
     ├── LICENSE
     ├── Makefile                    <- Makefile with all necessary commands to generate data and run experiments.
-    ├── data
+    ├── data                        <- Create after cloning!
     │   ├── interim                 <- Intermediate data that has been transformed.
-    │   └──  processed              <- The final data used for experiments.
+    │   └── processed               <- The final data used for experiments.
     │
     ├── models                      <- Trained and serialized models, model predictions, or model summaries.
     │
     ├── notebooks                   <- Jupyter notebooks (for plots)
     │
-    ├── reports                     <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures                 <- Generated graphics and figures to be used in reporting.
+    ├── reports                     <- Report
     │
     ├── requirements.txt            <- The requirements file for reproducing the analysis environment, e.g.
     │                                       generated with `pip freeze > requirements.txt`
