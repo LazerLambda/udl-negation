@@ -1,8 +1,8 @@
 experiment: 
-  _target_: neg_udl.MixedExperiment.MixedExperiment
-name: Mixed Experiment
+  _target_: neg_udl.MLMNegMixed.MLMNegMixed
+name: MLM / Mixed Experiment / Large
 seed: 42
-data_collator: DataCollatorForTokenClassification
+data_collator: DataCollatorForLanguageModeling
 model:
   name: prajjwal1/bert-small
   freeze_lower: 0
@@ -16,10 +16,13 @@ training:
   eval_steps_n: 10000
   eval_steps: True
 data:
-  path: ./data/processed/mixed_experiment/data.txt
+  path: ./data/processed/mlm_mixed/data_large.txt
   path_orig: ./data/processed/roberta_filtered/negation_aware_data.txt
-  path_synth: ./data/interim/wn_neg_processed/data_wn_masked.txt
+  path_synth: ./data/interim/wn_neg_processed/data_wn_unmasked_large.txt
+  mp_activate: False
   test-prop: 0.05
   val-prop: 0.5
+  blocksize: 128
+  amount: 10
 
 debug: False

@@ -1,6 +1,3 @@
-# RM
-dataset:
-	cd neg_udl/ && python data/make_dataset.py
 wiki:
 	cd neg_udl/ && python data/make_wiki.py
 owt:
@@ -26,8 +23,11 @@ exp_2_mlm+sup_DEBUG:
 exp_3_mlm:
 	python main.py --config-name exp3_config
 
-exp_3_mlm-DEBUG:
+exp_3_mlm_DEBUG:
 	python main.py --config-name exp3_config 'data.path=./data/processed/mlm_mixed/debug.txt'
 
 exp_3+_mlm:
-	python main.py --config-name
+	python main.py --config-name exp3+_config
+
+exp_3+_mlm_DEBUG:
+	python main.py --config-name exp3+_config 'data.path=./data/processed/mlm_mixed/debug.txt'
