@@ -13,6 +13,7 @@ import pathlib
 from multiprocessing import Pool
 from typing import Callable, List, Tuple
 
+import logging
 import datasets
 import hydra
 import pandas as pd
@@ -50,7 +51,7 @@ def process_wiki(args: tuple, save_step: int = 2000) -> None:
             sents.append(str(sent.text).replace('\n', ' ') + '\n')
             counter += 1
         if i % save_step == 0 and i != 0:
-            print(f"Process {p_no}.\nWrite to file: {i - save_step} - {i}.\nTotal: {i - ind_range[0]}/{total}.")
+            logging.info(f"Process {p_no}.\nWrite to file: {i - save_step} - {i}.\nTotal: {i - ind_range[0]}/{total}.")
             f.write(''.join(sents))
             sents = []
     f.write(''.join(sents))
@@ -89,7 +90,7 @@ def main(cfg: DictConfig) -> None:
         beam_runner="DirectRunner")
     n: int = len(dataset_wikipedia['train'])
     n = int(cfg.preprocessing.wiki.wiki_proportion * n)
-    print("Total length of new ds: ", str(n))
+    logging.info("Total length of new ds: ", str(n))
     p: int = multiprocessing.cpu_count()
     pathlib.Path(cfg.preprocessing.wiki.target).mkdir(parents=True, exist_ok=True)
     with Pool(p) as pool:
