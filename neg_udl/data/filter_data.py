@@ -1,6 +1,7 @@
-"""Main File to prepare Negation-Aware Data.
+"""Unsupervised Deep-Learning Seminar.
 
-Unsupervised Deep-Learning Seminar
+Main File to prepare Negation-Aware Data.
+
 LMU Munich
 Philipp Koch, 2023
 MIT-License
