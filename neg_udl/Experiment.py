@@ -1,6 +1,7 @@
-"""Main Experiment Class.
+"""Unsupervised Deep-Learning Seminar.
 
-Unsupervised Deep-Learning Seminar
+Main Experiment Class
+
 LMU Munich
 Philipp Koch, 2023
 MIT-License

@@ -1,7 +1,7 @@
-"""
+"""Unsupervised Deep-Learning Seminar.
+
 MLM + Supervised Masking Experiment
 
-Unsupervised Deep-Learning Seminar
 LMU Munich
 Philipp Koch, 2023
 MIT-License

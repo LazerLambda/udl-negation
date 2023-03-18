@@ -1,4 +1,11 @@
-"""Script to Create Dataset."""
+"""Unsupervised Deep-Learning Seminar.
+
+Script to Create Dataset
+
+LMU Munich
+Philipp Koch, 2023
+MIT-License
+"""
 
 import logging
 import os

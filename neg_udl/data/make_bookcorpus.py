@@ -1,6 +1,7 @@
-"""Preprocess Book Corpus DS.
+"""Unsupervised Deep-Learning Seminar.
 
-Unsupervised Deep-Learning Seminar
+Preprocess Book Corpus DS
+
 LMU Munich
 Philipp Koch, 2023
 MIT-License

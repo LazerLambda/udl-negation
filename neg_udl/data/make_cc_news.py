@@ -1,6 +1,7 @@
-"""Preprocess CC News.
+"""Unsupervised Deep-Learning Seminar.
 
-Unsupervised Deep-Learning Seminar
+Preprocess CC News
+
 LMU Munich
 Philipp Koch, 2023
 MIT-License

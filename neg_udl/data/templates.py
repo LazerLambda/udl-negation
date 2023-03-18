@@ -1,4 +1,12 @@
-"""Templates File."""
+"""Unsupervised Deep-Learning Seminar.
+
+Templates File
+
+LMU Munich
+Philipp Koch, 2023
+MIT-License
+"""
+
 
 NOUN_TEMPLATES: list = [
     "This is {a:word} and not {a:antonym}.",

@@ -1,6 +1,7 @@
-"""MLM-Based Experiment with Filtered Data (Negations Overrepresented).
+"""Unsupervised Deep-Learning Seminar.
 
-Unsupervised Deep-Learning Seminar
+MLM-Based Experiment with Filtered Data (Negations Overrepresented)
+
 LMU Munich
 Philipp Koch, 2023
 MIT-License

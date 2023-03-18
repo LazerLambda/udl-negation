@@ -1,6 +1,7 @@
-"""Preprocess Wiki Dataset.
+"""Unsupervised Deep-Learning Seminar.
 
-Unsupervised Deep-Learning Seminar
+Preprocess Wiki Dataset
+
 LMU Munich
 Philipp Koch, 2023
 MIT-License

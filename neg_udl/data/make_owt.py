@@ -1,6 +1,7 @@
-"""Preprocess OpenWebText DS.
+"""Unsupervised Deep-Learning Seminar.
 
-Unsupervised Deep-Learning Seminar
+Preprocess OpenWebText DS
+
 LMU Munich
 Philipp Koch, 2023
 MIT-License

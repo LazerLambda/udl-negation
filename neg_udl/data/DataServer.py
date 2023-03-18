@@ -1,6 +1,7 @@
-"""Class to handle Rolling Window.
+"""Unsupervised Deep-Learning Seminar.
 
-Unsupervised Deep-Learning Seminar
+Class to handle Rolling Window
+
 LMU Munich
 Philipp Koch, 2023
 MIT-License
