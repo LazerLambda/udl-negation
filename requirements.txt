@@ -16,6 +16,7 @@ flake8
 apache_beam
 checklist
 datasets
+matplotlib
 evaluate
 git+https://github.com/LazerLambda/life-after-bert/
 hydra-core

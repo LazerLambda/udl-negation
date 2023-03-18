@@ -108,8 +108,8 @@ def main(model_path: str, result_path: str, model_id: str = "prajjwal1/bert-smal
     """
     tokenizer: AutoTokenizer = AutoTokenizer.from_pretrained(model_id)
     data_collator: DataCollator = DataCollatorWithPadding(
-            tokenizer=tokenizer,
-            max_length=512)
+        tokenizer=tokenizer,
+        max_length=512)
     tasks: list = ['wnli', 'cola', 'mrpc', 'qnli', 'qqp', 'rte', 'sst2']
 
     training_args = TrainingArguments(
