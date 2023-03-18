@@ -1,5 +1,5 @@
 """
-Mixed Data Experiment.
+MLM + Supervised Masking Experiment
 
 Unsupervised Deep-Learning Seminar
 LMU Munich

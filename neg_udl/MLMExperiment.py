@@ -1,4 +1,4 @@
-"""MLM-Based Experiment with Overrepresented Negation Data.
+"""MLM-Based Experiment with Filtered Data (Negations Overrepresented).
 
 Unsupervised Deep-Learning Seminar
 LMU Munich

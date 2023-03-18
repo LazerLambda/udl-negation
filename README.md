@@ -3,6 +3,14 @@ UDL-Negation
 
 Experiments to improve the weakness of misunderstanding of negation in transformers.
 
+# Requirements
+
+# Create Data
+
+# Run Experimeńts
+
+# Evaluate
+
 Project Organization
 ------------
 
@@ -30,6 +38,9 @@ Project Organization
     │
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
     │                         generated with `pip freeze > requirements.txt`
+    │
+    ├── evaluation
+    │   └── figures        <- Evaluation script for selected GLUE-tasks.
     │
     ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
     ├── src                <- Source code for use in this project.

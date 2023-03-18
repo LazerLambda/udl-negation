@@ -1,7 +1,7 @@
 """Unsupervised Deep-Learning Seminar.
 
-MLM-Based Experiment with Overrepresented Negation Data
-and synthetic data.
+Experiment with Overrepresented Negation Data
+and synthetic data (MLM for whole data).
 
 LMU Munich
 Philipp Koch, 2023
@@ -25,7 +25,7 @@ from .Experiment import Experiment
 
 
 class MLMNegMixed(Experiment):
-    """Class to Perform MLM Experiment."""
+    """Class to Perform MLM Experiment on Filtered and WordNet Data."""
 
     blocksize: int = -1
 

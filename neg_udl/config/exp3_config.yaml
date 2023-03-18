@@ -1,4 +1,5 @@
-experiment: MLMNegMixed
+experiment: 
+  _target_: neg_udl.MLMNegMixed.MLMNegMixed
 name: MLM / Mixed Experiment
 seed: 42
 data_collator: DataCollatorForLanguageModeling
@@ -15,7 +16,7 @@ training:
   eval_steps_n: 10000
   eval_steps: True
 data:
-  path: ./data/processed/mlm_mixed/debug.txt
+  path: ./data/processed/mlm_mixed/data.txt
   path_orig: ./data/processed/roberta_filtered/negation_aware_data.txt
   path_synth: ./data/processed/wn_neg_processed/data_wn_unmasked.txt
   mp_activate: False

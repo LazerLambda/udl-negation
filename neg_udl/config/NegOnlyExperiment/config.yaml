@@ -15,7 +15,7 @@ training:
   eval_steps_n: 10000
   eval_steps: True
 data:
-  path: './data/processed/text.txt'
+  path: './data/processed/debug.txt'
   test-prop: 0.1
   val-prop: 0.5
 
