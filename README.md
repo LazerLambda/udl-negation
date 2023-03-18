@@ -55,7 +55,7 @@ Project Organization
     │   ├── interim                 <- Intermediate data that has been transformed.
     │   └── processed               <- The final data used for experiments.
     │
-    ├── models                      <- Trained and serialized models, model predictions, or model summaries.
+    ├── models                      <- Create after cloning! Trained and serialized models, model predictions, or model summaries.
     │
     ├── notebooks                   <- Jupyter notebooks (for plots)
     │
