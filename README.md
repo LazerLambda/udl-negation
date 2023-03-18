@@ -1,7 +1,12 @@
 UDL-Negation
 ==============================
 
-Experiments to improve the weakness of misunderstanding the concept of negation in encoder-based models.
+Code to the report "Comparing Data-Driven Techniques for Enhancing Negation Sensitivity in MLM-Based Laguage-Models".
+
+Transformers in the field of language have shown impressive results in recent years. Despite the overall improvement, these models still lack an understanding of fundamental natural language concepts. One significant problem is the misunderstanding of the concept of negation. This work tested three different techniques to boost the model's understanding capabilities. These approaches include training a BERT-Small model on:
+ - data with an increased amount of negations (filtered data) with MLM
+ - filtered data (with MLM) and artificially generated data based on WordNet in an adversarial setting (WordNet adversarial data) by using supervised masking to guide the model in training
+ - WordNet adversarial data and filtered data using only MLM.
 
 # Requirements
 
@@ -9,7 +14,7 @@ To install required libraries, run `pip install -r requirements.txt`.
 
 # Create Data
 
-To create the filterd training data, run the following four commands:
+To create the filtered training data, run the following four commands:
 
 `make owt`
 `make bc`
