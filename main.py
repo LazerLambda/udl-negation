@@ -17,7 +17,6 @@ load_dotenv()
 
 @hydra.main(version_base=None, config_path="neg_udl/config")
 def run_experiment(cfg: DictConfig) -> None:
-    print(cfg)
     experiment: Experiment = hydra.utils.instantiate(
         cfg.experiment,
         **{'name': cfg.name,

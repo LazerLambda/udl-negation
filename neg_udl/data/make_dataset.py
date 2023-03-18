@@ -15,10 +15,7 @@ from sys import stdout
 
 import nltk
 
-try:
-    from .templates import TEMPLATES
-except Exception:
-    from templates import TEMPLATES
+from .templates import TEMPLATES
 
 from typing import Callable, List, Tuple
 
