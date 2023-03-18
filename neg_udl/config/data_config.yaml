@@ -9,7 +9,7 @@ preprocessing:
     proportion: 0.1
     target: ../data/interim/cc_news/
   bc:
-    proportion: 0.00001
+    proportion: 0.1
     target: ../data/interim/bc/
   tmp:
     tmp_folder: ../data/interim/tmp/
