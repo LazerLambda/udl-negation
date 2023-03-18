@@ -8,13 +8,13 @@ MIT-License
 """
 
 
+import logging
 import multiprocessing
 import os
 import pathlib
 from multiprocessing import Pool
 from typing import Callable, List, Tuple
 
-import logging
 import datasets
 import hydra
 import pandas as pd

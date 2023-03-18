@@ -1,6 +1,6 @@
 """Unsupervised Deep-Learning Seminar.
 
-Main File to prepare Negation-Aware Data.
+Main File to prepare Negation-Aware Data
 
 LMU Munich
 Philipp Koch, 2023
@@ -12,7 +12,7 @@ import pathlib
 import re
 from os import listdir
 from os.path import isfile, join
-from typing import IO, List, Tuple
+from typing import IO, List, Match, Optional, Tuple
 
 import hydra
 import numpy as np
@@ -64,6 +64,18 @@ def make_data(path_target: str, path_data: str, path_csv: str, range_n: int, int
     collector.done()
 
 
+def regex_helper(regex: str, name: str) -> str:
+    """Get Deterministic String from Regex-Match.
+
+    :param regex: Regular expression.
+    :param name: Name of element.
+    :returns: Extracted match.
+    """
+    match: Optional[Match[str]] = re.search(regex, name)
+    assert match is not None
+    return match.group(1)
+
+
 def get_paths(path: str) -> List[Tuple[str, str, str]]:
     """Get Paths for Data Collection.
 
@@ -75,7 +87,7 @@ def get_paths(path: str) -> List[Tuple[str, str, str]]:
     files: list = [f for f in listdir(path) if isfile(join(path, f))]
     files_txt: list = list(filter(lambda e: bool(re.search(r"txt", e)), files))
     files_txt = list(map(lambda e: os.path.join(path, e), files_txt))
-    file_names_cleaned: list = list(map(lambda e: re.match(r".*\/(.*).txt$", e).group(1), files_txt))
+    file_names_cleaned: list = list(map(lambda e: regex_helper(r".*\/(.*).txt$", e), files_txt))
     files_csv: list = list(map(lambda e: os.path.join(path, e + '.csv'), file_names_cleaned))
     return list(zip(files_csv, files_txt, file_names_cleaned))
 
@@ -108,15 +120,16 @@ def main(cfg: DictConfig):
         for csv, txt, tail in paths:
             path_tmp: str = os.path.join(cfg.preprocessing.tmp.tmp_folder, tail + '_neg.txt')
             tmp_names.append(path_tmp)
-            # make_data(
-            #     path_tmp,
-            #     txt,
-            #     csv,
-            #     cfg.preprocessing.tmp.rolling_window)
+            make_data(
+                path_tmp,
+                txt,
+                csv,
+                cfg.preprocessing.tmp.rolling_window)
     tmp_names.sort()
     combine_data(
         tmp_names,
         cfg.preprocessing.final.data_path)
+
 
 if __name__ == "__main__":
     main()

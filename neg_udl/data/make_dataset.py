@@ -12,15 +12,13 @@ import os
 import pathlib
 import re
 from sys import stdout
-
-import nltk
-
-from .templates import TEMPLATES
-
 from typing import Callable, List, Tuple
 
+import nltk
 from checklist.editor import Editor
 from nltk.corpus import wordnet as wn
+
+from .templates import TEMPLATES
 
 # Download NLTK Prerequisites
 nltk.download('wordnet')

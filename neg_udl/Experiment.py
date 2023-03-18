@@ -12,12 +12,11 @@ import os
 import pathlib
 import re
 import typing
-from typing import Any, Optional, Union
+from typing import Any, Match, Optional, Union
 
 import life_after_bert
 import numpy as np
 import torch
-import wandb
 from datasets import Dataset, load_dataset
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
@@ -26,6 +25,8 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer
 from transformers import DataCollatorForLanguageModeling as DataCollator4LM
 from transformers import DataCollatorForTokenClassification as DataCollator4TC
 from transformers import get_scheduler
+
+import wandb
 
 
 class Experiment:
@@ -153,6 +154,17 @@ class Experiment:
         })
         wandb.run.name = name
 
+    def _regex_helper(self, regex: str, name: str) -> str:
+        """Get Deterministic String from Regex-Match.
+
+        :param regex: Regular expression.
+        :param name: Name of element.
+        :returns: Extracted match.
+        """
+        match: Optional[Match[str]] = re.search(regex, name)
+        assert match is not None
+        return match.group(1)
+
     def _freeze_layers(self, begin: int, end: int) -> list:
         """Freeze Layers of Model.
 
@@ -165,7 +177,7 @@ class Experiment:
         ret_list: list = []
         for name, param in self.model.named_parameters():
             if re.search(regex, name) is not None:
-                layer: int = int(re.search(regex, name).group(1))
+                layer: int = int(self._regex_helper(regex, name))
                 if layer in rng:
                     logging.info(f"FREEZE Layer: {name}")
                     param.requires_grad = False
