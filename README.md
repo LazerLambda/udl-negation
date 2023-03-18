@@ -46,7 +46,7 @@ To evaluate the trained model on selected GLUE-Tasks, run:
 
 `make evaluate`
 
-Project Organization
+# Project Organization
 ------------
 
     ├── LICENSE
