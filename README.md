@@ -5,6 +5,8 @@ Experiments to improve the weakness of misunderstanding of negation in transform
 
 # Requirements
 
+To install required libraries, run `pip install -r requirements.txt`
+
 # Create Data
 
 # Run Experimeńts
