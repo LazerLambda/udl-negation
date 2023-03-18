@@ -55,8 +55,6 @@ Project Organization
     │   ├── interim                 <- Intermediate data that has been transformed.
     │   └──  processed              <- The final data used for experiments.
     │
-    ├── docs                        <- A default Sphinx project; see sphinx-doc.org for details.
-    │
     ├── models                      <- Trained and serialized models, model predictions, or model summaries.
     │
     ├── notebooks                   <- Jupyter notebooks (for plots)
