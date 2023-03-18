@@ -5,13 +5,40 @@ Experiments to improve the weakness of misunderstanding of negation in transform
 
 # Requirements
 
-To install required libraries, run `pip install -r requirements.txt`
+To install required libraries, run `pip install -r requirements.txt`.
 
 # Create Data
 
+To create the filterd training data, run the following four commands:
+
+`make owt`
+`make bc`
+`make wiki`
+`make cc_news`
+
+Set paths and other configurations in `neg_udl/config/data_config.yaml`
+
+WARNING: These operations might take several days!
+WARNING: Undefined behavior experienced using multiprocessing!
+
 # Run Experimeńts
 
+Run experiments running the following commands (CUDA-capable device recommended):
+
+```make exp_1_filtered```
+
+```make exp_2_mlm+sup```
+
+```make exp_3_mlm```
+```make exp_3+_mlm```
+
+Set paths and other configurations in `neg_udl/config/exp{1,2,3,3+}_config.yaml`
+
 # Evaluate
+
+To evaluate the trained model on selected GLUE-Tasks, run:
+
+`make evaluate`
 
 Project Organization
 ------------
