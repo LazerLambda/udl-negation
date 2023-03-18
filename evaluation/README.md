@@ -1,6 +1,7 @@
-Evaluation Related Code
+Evaluating the Model
 ==============================
 
+Run `python evaluation/evaluation.py --help` to see all possible command line arguments for the evaluation script.
 
 ------------
 
