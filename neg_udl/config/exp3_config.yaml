@@ -11,7 +11,7 @@ model:
   tmp_path: ./models/
 training:
   epochs: 3
-  batch_size: 20
+  batch_size: 24
   lr: 5e-5
   eval_steps_n: 10000
   eval_steps: True
